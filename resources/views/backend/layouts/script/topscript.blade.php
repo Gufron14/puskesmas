@@ -14,6 +14,7 @@
 <!-- Icons CSS -->
 <link rel="stylesheet" href="{{ asset('backend/assets/css/feather.css') }}">
 <link rel="stylesheet" href="{{ asset('backend/assets/css/select2.css') }}">
+<link rel="stylesheet" href="{{ asset('backend/assets/css/dataTables.bootstrap4.css') }}">
 <!-- App CSS -->
 <link rel="stylesheet" href="{{ asset('backend/assets/css/app-light.css') }}" id="lightTheme">
 <link rel="stylesheet" href="{{ asset('backend/assets/css/app-dark.css') }}" id="darkTheme" disabled>
