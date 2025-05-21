@@ -2,7 +2,10 @@
     <button type="button" class="navbar-toggler text-muted mt-2 p-0 mr-3 collapseSidebar">
         <i class="fe fe-menu navbar-toggler-icon"></i>
     </button>
-    
+    <div class="mr-auto h4 mb-0 text-dark font-weight-bold">
+        SIM RM
+    </div>
+
     <ul class="nav">
         <li class="nav-item">
             <a class="nav-link text-muted my-2" href="#" id="modeSwitcher" data-mode="light">
@@ -19,13 +22,11 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
                 <div class="dropdown-header" href="javascript:voind(0)">
-                    <span class=""></span>
-                    <p class=""></p>
+                    <h6 class="m-0">{{ Auth::user()->name }}</h6>
+                    <small>{{ Auth::user()->telepon }}</small>
                 </div>
-                <a class="dropdown-item" href="" onclick="Logout();">
-                    {{ __('Logout') }}
-                </a>
-                <form id="logout-form" action="" method="POST" class="d-none">
+                <a class="dropdown-item" href="{{ route('logout') }}" onclick="Logout();">Logout</a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                     @csrf
                 </form>
             </div>
