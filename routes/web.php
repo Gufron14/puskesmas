@@ -2,7 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PasienController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\PemeriksaanController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
@@ -13,6 +16,12 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
+    Route::resource('pasien', PasienController::class);
+    Route::get('/pendaftaran', [PasienController::class, 'create'])->name('pendaftaran');
+    Route::get('/pemeriksaan', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
+    Route::post('/pemeriksaan', [PemeriksaanController::class, 'store'])->name('pemeriksaan.post');
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
+
 
 });
 Route::get('/', function () {
@@ -21,23 +30,14 @@ Route::get('/', function () {
 Route::get('/daftar', function () {
     return view('frontend.pendaftaran');
 });
+Route::get('/profil', function () {
+    return view('frontend.profil');
+});
 Route::get('/masukan', function () {
     return view('frontend.masukan');
 });
-Route::get('/pendaftaran', function () {
-    return view('backend.pages.pendaftaran');
-});
-Route::get('/pemeriksaan', function () {
-    return view('backend.pages.pemeriksaan');
-});
-Route::get('/pembayaran', function () {
-    return view('backend.pages.pembayaran');
-});
 Route::get('/mantri', function () {
     return view('backend.pages.mantri.index');
-});
-Route::get('/pasien', function () {
-    return view('backend.pages.pasien.index');
 });
 Route::get('/rekamedis', function () {
     return view('backend.pages.rekamedis.index');
