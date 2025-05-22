@@ -4,22 +4,7 @@
     <div class="container-fluid">
         <h4 class="font-weight-bold mb-4">Dashboard</h4>
         <div class="row">
-            <div class="col-md-3">
-                <div class="card rounded-lg shadow bg-primary">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col">
-                                <h1 class="text-white">{{ $mantri }}</h1>
-                                <h6 class="text-white">Data Mantri</h6>
-                            </div>
-                            <div class="col-auto">
-                                <span class="fe fe-32 fe-layers text-white mb-0"></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card rounded-lg shadow bg-warning">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -34,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card rounded-lg shadow bg-danger">
                     <div class="card-body">
                         <div class="row align-items-center">
@@ -49,7 +34,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-4">
                 <div class="card rounded-lg shadow bg-success">
                     <div class="card-body">
                         <div class="row align-items-center">

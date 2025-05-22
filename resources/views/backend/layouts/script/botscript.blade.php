@@ -30,29 +30,6 @@
         ]
     });
 
-    function deleteActivity(id) {
-        event.preventDefault();
-
-        const formId = `Hapus${id}`;
-        const form = document.getElementById(formId);
-
-        Swal.fire({
-            title: 'Apakah Anda Yakin ?',
-            text: 'Data Akan Terhapus Secara Permanen!',
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a746',
-            cancelButtonColor: '#FF0000',
-            confirmButtonText: 'Hapus',
-            cancelButtonText: 'Batal',
-            reverseButtons: true,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-    }
-
     function Logout() {
         event.preventDefault();
         const Logout = document.getElementById('logout-form');

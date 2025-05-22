@@ -9,87 +9,55 @@
                 <img src="{{ asset('backend/assets/logo/logo.png') }}" alt="..." height="50" />
             </a>
         </div>
-
-        <!-- Dashboard -->
         <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('home') ? 'active' : '' }}">
-                <a class="nav-link d-flex align-items-center" href="{{ route('home') }}">
-                    <div>
-                        <i class="fe fe-home fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Dashboard</span>
-                    </div>
+            <li class="nav-item w-100 {{ Route::currentRouteNamed('home') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('home') }}">
+                    <i class="fe fe-home fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Dashboard</span>
+                </a>
+            </li>
+        </ul>
+
+        <p class="text-white font-weight-bold nav-heading mt-2 mb-1">
+            <span>Menu</span>
+        </p>
+        <ul class="navbar-nav flex-fill w-100 mb-2">
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pendaftaran') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pendaftaran') }}">
+                    <i class="fe fe-list fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Pendaftaran</span>
+                </a>
+            </li>
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pasien.index') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pasien.index') }}">
+                    <i class="fe fe-folder-plus fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Data Pasien</span>
+                </a>
+            </li>
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pemeriksaan') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pemeriksaan') }}">
+                    <i class="fe fe-file-text fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Pemeriksaan</span>
+                </a>
+            </li>
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pembayaran') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pembayaran') }}">
+                    <i class="fe fe-credit-card fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Pembayaran</span>
+                </a>
+            </li>
+
+            <li class="nav-item w-100 mb-2 ">
+                <a class="nav-link" href="/rekamedis">
+                    <i class="fe fe-inbox fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
                 </a>
             </li>
             <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/pendaftaran">
-                    <div>
-                        <i class="fe fe-list fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Pendaftaran</span>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/pemeriksaan">
-                    <div>
-                        <i class="fe fe-file-text fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Pemeriksaan</span>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/pembayaran">
-                    <div>
-                        <i class="fe fe-credit-card fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Pembayaran</span>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/mantri">
-                    <div>
-                        <i class="fe fe-layers fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Data Mantri</span>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/pasien">
-                    <div>
-                        <i class="fe fe-folder-plus fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Data Pasien</span>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/rekamedis">
-                    <div>
-                        <i class="fe fe-inbox fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
-                    </div>
-                </a>
-            </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link d-flex align-items-center" href="/data-laporan">
-                    <div>
-                        <i class="fe fe-printer fe-16"></i>
-                    </div>
-                    <div>
-                        <span class="ml-3 item-text font-weight-bold">Data Laporan</span>
-                    </div>
+                <a class="nav-link" href="/data-laporan">
+                    <i class="fe fe-printer fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Data Laporan</span>
+
                 </a>
             </li>
         </ul>
