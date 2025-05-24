@@ -10,29 +10,38 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0 d-flex align-items-center">
                 <li class="nav-item">
-                    <a class="nav-link" href="/">Beranda</a>
+                    <a class="nav-link" href="{{ route('frontend') }}">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/daftar">Pendaftaran</a>
+                    <a class="nav-link" href="{{ route('daftar') }}">Pendaftaran</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/masukan">Masukan</a>
+                    <a class="nav-link" href="{{ route('masukan') }}">Masukan</a>
                 </li>
                 @guest
                     <!-- Belum login: tampilkan tombol login & register -->
                     <li class="nav-item">
-                        <a class="nav-link btn btn-warning fw-bold me-2 text-dark px-3" href="{{ route('login') }}">Login</a>
+                        <a class="nav-link btn btn-warning fw-bold me-2 text-dark px-3"
+                            href="{{ route('login') }}">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn btn-warning fw-bold text-dark px-3" href="{{ route('register') }}">Register</a>
+                        <a class="nav-link btn btn-warning fw-bold text-dark px-3"
+                            href="{{ route('register') }}">Register</a>
                     </li>
                 @else
                     <!-- Sudah login: tampilkan foto profil -->
                     <li class="nav-item">
-                        <a class="nav-link" href="/profil">
-                            <img src="{{ Auth::user()->foto ?? asset('backend/assets/avatars/Profiledefault.png') }}"
+                        <a class="nav-link" href="{{ route('profil') }}">
+                            <img src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : asset('backend/assets/avatars/Profiledefault.png') }}"
                                 alt="Profil" height="40" class="rounded-circle">
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-warning fw-bold text-dark px-3" href="{{ route('logout') }}"
+                            onclick="Logout();">Logout</a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
                     </li>
                 @endguest
             </ul>

@@ -6,62 +6,94 @@
             <div class="mb-5">
                 <h2 class="section-heading text-uppercase">Pendaftaran Pasien Baru</h2>
             </div>
-            <form action="">
+            <form action="{{ route('daftar.post') }}" method="POST">
+                @csrf
+
                 <div class="mb-3">
-                    <label class="form-label" for="name">Nama Pasien</label>
-                    <input type="text" name="name" class="form-control" placeholder="Masukan Nama Lengkap" required>
+                    <label for="nama_pasien" class="form-label text-dark font-weight-bold">Nama Pasien</label>
+                    <input type="text" class="form-control" name="nama_pasien" value="{{ old('nama_pasien') }}"
+                        placeholder="Masukan nama lengkap" required>
                 </div>
+
                 <div class="mb-3">
-                    <label class="form-label">Jenis Kelamin</label>
-                    <div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="jenisKelamin" id="lakiLaki"
-                                value="Laki-laki" required>
-                            <label class="form-check-label" for="lakiLaki">Laki-Laki</label>
+                    <label class="font-weight-bold" for="jenis_kelamin">Jenis Kelamin</label>
+                    <div class="d-flex align-items-center" style="gap: 10px">
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="customRadio1" name="jenis_kelamin" class="custom-control-input"
+                                value="Laki-laki" checked>
+                            <label class="custom-control-label" for="customRadio1">Laki-Laki</label>
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="jenisKelamin" id="perempuan"
+                        <div class="custom-control custom-radio">
+                            <input type="radio" id="customRadio2" name="jenis_kelamin" class="custom-control-input"
                                 value="Perempuan">
-                            <label class="form-check-label" for="perempuan">Perempuan</label>
+                            <label class="custom-control-label" for="customRadio2">Perempuan</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="usia" class="form-label">Usia</label>
-                    <input type="number" class="form-control" id="usia" placeholder="Masukkan usia anda" required>
+                    <label for="usia" class="form-label text-dark font-weight-bold">Usia</label>
+                    <input type="number" class="form-control" min="1" name="usia" value="{{ old('usia') }}"
+                        required>
                 </div>
-
                 <div class="mb-3">
-                    <label for="noAntrian" class="form-label">No Antrian</label>
-                    <input type="text" class="form-control" id="noAntrian" value="4" readonly>
-                    <div class="mt-1">
-                        <small class="text-muted">08:00-08:20</small>
+                    <label for="noAntrian" class="form-label">Pilih No Antrian</label>
+                    <select name="nomor_antrian" id="noAntrian" class="form-control" required>
+                        @if ($sisaAntrian > 0)
+                            <option value="" selected disabled>-- Pilih Nomor Antrian --</option>
+                            @foreach ($nomorWaktu as $item)
+                                <option value="{{ $item['nomor'] }}">
+                                    Antrian Nomor {{ $item['nomor'] }} ({{ $item['waktu'] }})
+                                </option>
+                            @endforeach
+                        @else
+                            <option value="">Maaf, kuota antrian hari ini penuh.</option>
+                        @endif
+                    </select>
+                    <div class="form-text text-danger">
+                        @if ($sisaAntrian > 0)
+                            Sisa antrian hari ini: {{ $sisaAntrian }}
+                        @else
+                            Tidak ada sisa antrian untuk hari ini.
+                        @endif
                     </div>
-                    <div class="error-text">Sisa no antrian 3</div>
+                </div>
+
+
+                <div class="mb-3">
+                    <label for="nik" class="form-label text-dark font-weight-bold">NIK</label>
+                    <input type="text" class="form-control" name="nik" value="{{ old('nik') }}"
+                        placeholder="Masukan 16 digit NIK" required>
                 </div>
 
                 <div class="mb-3">
-                    <label for="alamat" class="form-label">Alamat Lengkap</label>
-                    <textarea class="form-control" id="alamat" rows="3" placeholder="Masukkan alamat lengkap anda" required></textarea>
+                    <label for="alamat" class="form-label text-dark font-weight-bold">Alamat</label>
+                    <textarea class="form-control" name="alamat" rows="6" placeholder="Masukan alamat lengkap">{{ old('alamat') }}</textarea>
                 </div>
 
                 <div class="mb-3">
-                    <label for="noTelepon" class="form-label">No Telepon</label>
-                    <input type="tel" class="form-control" id="noTelepon"
-                        placeholder="Masukkan nomor telepon aktif anda" required>
+                    <label for="telepon" class="form-label text-dark font-weight-bold">No Telepon</label>
+                    <input id="telepon" type="text" class="form-control" name="telepon" value="{{ old('telepon') }}"
+                        placeholder="Masukan nomor telepon aktif (Contoh: 081234567890)" required autocomplete="tel"
+                        autofocus pattern="^08[0-9]{8,12}" title="Nomor harus dimulai dari 08 dan hanya angka">
                 </div>
-
-                <div class="mb-3">
-                    <label for="keluhan" class="form-label">Keluhan</label>
-                    <textarea class="form-control" id="keluhan" rows="3"
-                        placeholder="Tuliskan gejala atau keluhan yang dirasakan anda dengan jelas" required></textarea>
-                </div>
-
-                <div class="text-end">
-                    <button type="submit" class="btn btn-success">Submit</button>
+                <div class="float-right">
+                    <a href="{{ route('pasien.index') }}" class="btn btn-danger">Kembali</a>
+                    <button type="submit" class="btn btn-success text-white">Simpan</button>
                 </div>
             </form>
         </div>
     </section>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#28a745'
+            });
+        </script>
+    @endif
 @endsection

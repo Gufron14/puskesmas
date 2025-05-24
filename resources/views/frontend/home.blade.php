@@ -62,75 +62,65 @@
     <section class="page-section bg-white" id="portfolio">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="section-heading text-uppercase">Masukan</h2>
+                <h2 class="section-heading text-uppercase">Saran & Keluhan</h2>
             </div>
-            <div class="row justify-content-center">
-                <div class="col-lg-4 col-sm-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex gap-4 align-items-center">
-                                <div class="team-member">
-                                    <img class="mx-auto rounded-circle" src="{{ asset('frontend/assets/img/team/1.jpg') }}"
-                                        alt="..." />
-                                </div>
-                                <div class="text-content">
-                                    <h5>Bintang</h5>
-                                    <p class="mb-0">Mantap Pelayanannya..</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-sm-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex gap-4 align-items-center">
-                                <div class="team-member">
-                                    <img class="mx-auto rounded-circle" src="{{ asset('frontend/assets/img/team/1.jpg') }}"
-                                        alt="..." />
-                                </div>
-                                <div class="text-content">
-                                    <h5>Bintang</h5>
-                                    <p class="mb-0">Mantap Pelayanannya..</p>
+            <div class="row">
+                {{-- Kolom Masukan --}}
+                <div class="col-md-6">
+                    @php
+                        $hanyaMasukan = $masukans->filter(fn($m) => $m->masukan);
+                    @endphp
+
+                    @forelse ($hanyaMasukan as $masukan)
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex gap-4 align-items-center">
+                                    <div class="team-member">
+                                        <img class="mx-auto rounded-circle"
+                                            src="{{ $masukan->user->foto ? asset('storage/' . $masukan->user->foto) : asset('frontend/assets/img/team/1.jpg') }}"
+                                            alt="Foto Profil" width="80" height="80">
+                                    </div>
+                                    <div class="text-content">
+                                        <h5>{{ $masukan->user->name }}</h5>
+                                        <p class="mb-0">{{ $masukan->masukan }}</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-sm-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex gap-4 align-items-center">
-                                <div class="team-member">
-                                    <img class="mx-auto rounded-circle" src="{{ asset('frontend/assets/img/team/1.jpg') }}"
-                                        alt="..." />
-                                </div>
-                                <div class="text-content">
-                                    <h5>Bintang</h5>
-                                    <p class="mb-0">Mantap Pelayanannya..</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 col-sm-6 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex gap-4 align-items-center">
-                                <div class="team-member">
-                                    <img class="mx-auto rounded-circle" src="{{ asset('frontend/assets/img/team/1.jpg') }}"
-                                        alt="..." />
-                                </div>
-                                <div class="text-content">
-                                    <h5>Bintang</h5>
-                                    <p class="mb-0">Mantap Pelayanannya..</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    @empty
+                        <p class="text-center">Belum ada masukan.</p>
+                    @endforelse
                 </div>
 
+                {{-- Kolom Keluhan --}}
+                <div class="col-md-6">
+                    @php
+                        $hanyaKeluhan = $masukans->filter(fn($m) => $m->keluhan);
+                    @endphp
+
+                    @forelse ($hanyaKeluhan as $masukan)
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="d-flex gap-4 align-items-center">
+                                    <div class="team-member">
+                                        <img class="mx-auto rounded-circle"
+                                            src="{{ $masukan->user->foto ? asset('storage/' . $masukan->user->foto) : asset('frontend/assets/img/team/1.jpg') }}"
+                                            alt="Foto Profil" width="80" height="80">
+                                    </div>
+                                    <div class="text-content">
+                                        <h5>{{ $masukan->user->name }}</h5>
+                                        <p class="mb-0">{{ $masukan->keluhan }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <p class="text-center">Belum ada keluhan.</p>
+                    @endforelse
+                </div>
             </div>
+
+
         </div>
     </section>
     <!-- About-->
