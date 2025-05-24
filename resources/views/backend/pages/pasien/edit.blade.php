@@ -48,6 +48,10 @@
                 <label for="usia" class="form-label">Usia</label>
                 <input type="number" class="form-control" name="usia" value="{{ old('usia', $pasien->usia) }}" required>
             </div>
+            <div class="mb-3">
+                <label for="nomor_antrian" class="form-label">Nomor Antrian</label>
+                <input type="number" class="form-control" name="nomor_antrian" value="{{ old('nomor_antrian', $pasien->nomor_antrian) }}" disabled>
+            </div>
 
             <div class="mb-3">
                 <label for="nik" class="form-label">NIK</label>

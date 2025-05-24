@@ -60,5 +60,10 @@ class PembayaranController extends Controller
 
         return redirect()->route('rekamedis')->with('success', 'Pembayaran berhasil.');
     }
+    public function destroy(Pembayaran $pembayaran)
+    {
+        $pembayaran->delete();
+        return redirect()->back()->with('success', 'Data berhasil dihapus.');
+    }
 
 }

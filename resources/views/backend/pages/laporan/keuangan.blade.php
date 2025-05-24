@@ -83,12 +83,56 @@
                             <td>{{ strtoupper($item->metode) }}</td>
                             <td>Rp{{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($item->kembalian, 0, ',', '.') }}</td>
-                            <td><a href="{{ route('pembayaran.invoice', $item->id) }}"
-                                    class="btn btn-success text-white px-3" target="_blank">Cetak</a></td>
+                            <td>
+                                <button class="btn btn-danger" onclick="deleteActivity({{ $item->id }})">Hapus</button>
+                                <form id="Hapus{{ $item->id }}" action="{{ route('pembayaran.destroy', $item->id) }}"
+                                    method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                <a href="{{ route('pembayaran.invoice', $item->id) }}"
+                                    class="btn btn-success text-white px-3" target="_blank">Cetak</a>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#28a745'
+            });
+        </script>
+    @endif
+    <script>
+        function deleteActivity(id) {
+            event.preventDefault();
+
+            const formId = `Hapus${id}`;
+            const form = document.getElementById(formId);
+
+            Swal.fire({
+                title: 'Apakah Anda Yakin ?',
+                text: 'Data Akan Terhapus Secara Permanen!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a746',
+                cancelButtonColor: '#FF0000',
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    </script>
 @endsection

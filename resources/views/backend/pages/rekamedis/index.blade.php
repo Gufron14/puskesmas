@@ -50,7 +50,14 @@
                             <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
                             <td>
                                 <!-- Aksi seperti tombol lihat/cetak/edit -->
-                                <a href="#" class="btn btn-danger">Hapus</a>
+                                <button class="btn btn-danger" onclick="deleteActivity({{ $item->id }})">Hapus</button>
+                                <form id="Hapus{{ $item->id }}" action="{{ route('pemeriksaan.destroy', $item->id) }}"
+                                    method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                                <a href="{{ route('rekamedis.edit', $item->pasien_id) }}" 
+                                    class="btn btn-primary text-white">Edit</a>
                                 <a href="{{ route('pemeriksaan.exportPdf', $item->pasien_id) }}" target="_blank"
                                     class="btn btn-success text-white">Cetak</a>
                             </td>
@@ -73,4 +80,28 @@
             });
         </script>
     @endif
+    <script>
+        function deleteActivity(id) {
+            event.preventDefault();
+
+            const formId = `Hapus${id}`;
+            const form = document.getElementById(formId);
+
+            Swal.fire({
+                title: 'Apakah Anda Yakin ?',
+                text: 'Data Akan Terhapus Secara Permanen!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a746',
+                cancelButtonColor: '#FF0000',
+                confirmButtonText: 'Hapus',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        }
+    </script>
 @endsection

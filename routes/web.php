@@ -33,9 +33,13 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/pendaftaran', [PasienController::class, 'create'])->name('pendaftaran');
     Route::get('/pemeriksaan', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
     Route::post('/pemeriksaan', [PemeriksaanController::class, 'store'])->name('pemeriksaan.post');
+    Route::delete('/pemeriksaan/{pemeriksaan}', [PemeriksaanController::class, 'destroy'])->name('pemeriksaan.destroy');
     Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('pembayaran');
     Route::post('/pembayaran', [PembayaranController::class, 'store'])->name('pembayaran.post');
+    Route::delete('/pembayaran/{pembayaran}', [PembayaranController::class, 'destroy'])->name('pembayaran.destroy');
     Route::get('/rekamedis', [RekamMedisController::class, 'index'])->name('rekamedis');
+    Route::get('/rekamedis/edit/{id}', [RekamMedisController::class, 'edit'])->name('rekamedis.edit');
+    Route::put('/rekamedis/update/{id}', [RekamMedisController::class, 'update'])->name('rekamedis.update');
     Route::get('/pemeriksaan/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
     Route::get('/data-laporan', [RekamMedisController::class, 'keuangan'])->name('datalaporan');
     Route::get('/pembayaran/invoice/{id}', [RekamMedisController::class, 'cetakInvoice'])->name('pembayaran.invoice');

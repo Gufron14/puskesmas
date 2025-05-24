@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pasien;
 use App\Models\Pembayaran;
 use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
@@ -27,6 +28,46 @@ class RekamMedisController extends Controller
 
         return view('backend.pages.rekamedis.index', compact('pemeriksaans'));
     }
+    public function edit($id)
+    {
+                $tanggal = now()->toDateString(); // hari ini
+        $pasiens = Pasien::where('tanggal_antrian', $tanggal)
+            ->orderBy('nomor_antrian')
+            ->get();
+        $pemeriksaan = Pemeriksaan::with('pasien')->findOrFail($id);
+        $resepObat = json_decode($pemeriksaan->resep_obat, true) ?? [];
+
+        return view('backend.pages.rekamedis.edit', compact('pemeriksaan', 'pasiens', 'resepObat'));
+    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'pasien_id'            => 'required|exists:pasiens,id',
+            'tanggal_pemeriksaan'  => 'required|date',
+            'sistolik'             => 'required|numeric',
+            'diastolik'            => 'required|numeric',
+            'gejala'               => 'nullable|string',
+            'catatan_dokter'       => 'nullable|string',
+            'biaya'                => 'nullable|numeric',
+            'resep'                => 'nullable|array',
+        ]);
+
+        $pemeriksaan = Pemeriksaan::findOrFail($id);
+
+        $pemeriksaan->update([
+            'pasien_id'            => $request->pasien_id,
+            'tanggal_pemeriksaan'  => $request->tanggal_pemeriksaan,
+            'tensi_sistolik'       => $request->sistolik,
+            'tensi_diastolik'      => $request->diastolik,
+            'gejala'               => $request->gejala,
+            'catatan_dokter'       => $request->catatan_dokter,
+            'resep_obat'           => json_encode($request->resep),
+            'biaya'                => $request->biaya,
+        ]);
+
+        return redirect()->route('rekamedis')->with('success', 'Data berhasil diperbarui.');
+    }
+
     public function exportPdf($id)
     {
         $pemeriksaan = Pemeriksaan::with('pasien')

@@ -45,7 +45,13 @@ class PemeriksaanController extends Controller
         // Update status pasien jadi "Diperiksa"
         Pasien::where('id', $request->pasien_id)->update(['status' => 'diperiksa']);
 
-        return redirect()->route('pembayaran', ['pemeriid' => $pemeriksaan->id])->with('success', 'Data pemeriksaan berhasil disimpan.');
+        return redirect()->route('pembayaran', ['id' => $pemeriksaan->id])->with('success', 'Data pemeriksaan berhasil disimpan.');
+    }
+
+    public function destroy(Pemeriksaan $pemeriksaan)
+    {
+        $pemeriksaan->delete();
+        return redirect()->back()->with('success', 'Data berhasil dihapus.');
     }
 
 }
