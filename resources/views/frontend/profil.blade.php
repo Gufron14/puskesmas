@@ -6,16 +6,18 @@
             <div class="mb-5">
                 <h2 class="section-heading text-uppercase">Profil</h2>
             </div>
-            <form action="">
+
+            <form action="{{ route('profil.update') }}" method="POST" enctype="multipart/form-data">
+                @csrf
                 <center>
-                    {{-- @if (Auth::user()->foto) --}}
                     <div class="avatar avatar-xl mt-4">
-                        <img id="preview" src="{{ asset('backend/assets/avatars/Profiledefault.png') }}" alt="Preview Image"
-                            class="avatar-img rounded-circle mb-2" style="display: block;width:200px;height:200px;">
+                        <img id="preview"
+                            src="{{ Auth::user()->foto ? asset('storage/' . Auth::user()->foto) : asset('backend/assets/avatars/Profiledefault.png') }}"
+                            alt="Preview Image" class="avatar-img rounded-circle mb-2"
+                            style="display: block; width:200px; height:200px;">
                     </div>
-                    {{-- @else
-                        <h5 class="text-muted mt-4 mb-2">Belum Ada foto</h5>
-                    @endif --}}
+
+
                     <div class="form-group">
                         <p class="text-muted"><small>Ukuran gambar maksimum: 2MB. Format gambar yang
                                 diizinkan: JPG, JPEG, PNG.</small></p>
@@ -25,17 +27,18 @@
                 </center>
                 <div class="mb-3">
                     <label class="form-label" for="name">Nama Lengkap</label>
-                    <input type="text" name="name" class="form-control" placeholder="Masukan Nama Lengkap" value="{{ Auth::user()->name }}" required>
+                    <input type="text" name="name" class="form-control" placeholder="Masukan Nama Lengkap"
+                        value="{{ Auth::user()->name }}" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="noTelepon" class="form-label">No Telepon</label>
-                    <input type="tel" class="form-control" id="noTelepon" value="{{ Auth::user()->telepon }}"
-                        placeholder="Masukkan nomor telepon aktif anda" required>
+                    <input type="tel" class="form-control" id="noTelepon" name="telepon"
+                        value="{{ Auth::user()->telepon }}" placeholder="Masukkan nomor telepon aktif anda" required>
                 </div>
 
                 <div class="text-end">
-                    <button type="submit" class="btn btn-success">Submit</button>
+                    <button type="submit" class="btn btn-success">Simpan</button>
                 </div>
             </form>
         </div>
@@ -57,4 +60,26 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (session('success'))
+        <script>
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('success') }}',
+                confirmButtonColor: '#28a745'
+            });
+        </script>
+    @endif
+    @if (session('error'))
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Pmberitahuan!',
+                text: '{{ session('error') }}',
+                confirmButtonColor: '#28a745'
+            });
+        </script>
+    @endif
 @endsection
