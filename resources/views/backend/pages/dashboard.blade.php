@@ -39,7 +39,7 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col">
-                                <h1 class="text-white">{{ $totaluang }}</h1>
+                                <h1 class="text-white">Rp{{ number_format($totaluang, 0, ',', '.') }}</h1>
                                 <h6 class="text-white">Total Keuangan</h6>
                             </div>
                             <div class="col-auto">
