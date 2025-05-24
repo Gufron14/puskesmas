@@ -4,7 +4,7 @@
     <meta name="author" content="" />
     <title>SIM RM</title>
     <!-- Favicon-->
-    <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+<link rel="icon" href="{{ asset('backend/assets/logo/logo.png') }}">
     <!-- Font Awesome icons (free version)-->
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <!-- Google fonts-->
