@@ -51,6 +51,7 @@ class AuthController extends Controller
         User::create([
             'name'     => $request->name,
             'telepon'  => $request->telepon,
+            'role'  => 'User',
             'password' => Hash::make($request->password),
         ]);
 
@@ -76,15 +77,24 @@ class AuthController extends Controller
 
         $remember = $request->filled('remember');
 
-        if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            return redirect()->intended('/dashboard');
-        }
+if (Auth::attempt($credentials, $remember)) {
+    $request->session()->regenerate();
+
+    $user = Auth::user();
+    $role = strtolower($user->role);
+
+    if ($role === 'admin') {
+        return redirect()->intended('/dashboard');
+    } else {
+        return redirect()->intended('/'); // atau '/' jika itu halaman user
+    }
+}
 
         return back()->withErrors([
             'telepon' => 'Nomor telepon atau password salah.',
         ])->onlyInput('telepon');
     }
+
 
     /**
      * Logout user
@@ -96,6 +106,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('frontend');
     }
 }

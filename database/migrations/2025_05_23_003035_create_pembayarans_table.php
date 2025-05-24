@@ -13,7 +13,15 @@ return new class extends Migration
     {
         Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('pemeriksaan_id')->nullable();
+            $table->string('metode');
+            $table->decimal('biaya_pemeriksaan', 10, 2)->default(0);
+            $table->decimal('total_obat', 10, 2)->default(0);
+            $table->decimal('total_tagihan', 10, 2)->default(0);
+            $table->decimal('jumlah_bayar', 10, 2)->default(0);
+            $table->decimal('kembalian', 10, 2)->default(0);
             $table->timestamps();
+            $table->foreign('pemeriksaan_id')->references('id')->on('pemeriksaans')->onDelete('set null');
         });
     }
 

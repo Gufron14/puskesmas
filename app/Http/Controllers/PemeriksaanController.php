@@ -31,7 +31,7 @@ class PemeriksaanController extends Controller
             'biaya'                => 'nullable|numeric',
         ]);
 
-        Pemeriksaan::create([
+        $pemeriksaan = Pemeriksaan::create([
             'pasien_id'            => $request->pasien_id,
             'tanggal_pemeriksaan'  => $request->tanggal_pemeriksaan,
             'tensi_sistolik'       => $request->sistolik,
@@ -45,7 +45,7 @@ class PemeriksaanController extends Controller
         // Update status pasien jadi "Diperiksa"
         Pasien::where('id', $request->pasien_id)->update(['status' => 'diperiksa']);
 
-        return redirect()->route('pemeriksaan')->with('success', 'Data pemeriksaan berhasil disimpan.');
+        return redirect()->route('pembayaran', ['pemeriid' => $pemeriksaan->id])->with('success', 'Data pemeriksaan berhasil disimpan.');
     }
 
 }

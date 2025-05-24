@@ -47,14 +47,14 @@
                 </a>
             </li>
 
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link" href="/rekamedis">
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('rekamedis') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('rekamedis') }}">
                     <i class="fe fe-inbox fe-16"></i>
                     <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
                 </a>
             </li>
-            <li class="nav-item w-100 mb-2 ">
-                <a class="nav-link" href="/data-laporan">
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('datalaporan') ? 'active' : '' }}"">
+                <a class="nav-link" href="{{ route('datalaporan') }}">
                     <i class="fe fe-printer fe-16"></i>
                     <span class="ml-3 item-text font-weight-bold">Data Laporan</span>
 

@@ -87,6 +87,22 @@
     <script>
         let index = 1;
 
+        function formatRupiah(angka, prefix = '') {
+            let number_string = angka.replace(/[^,\d]/g, '').toString(),
+                split = number_string.split(','),
+                sisa = split[0].length % 3,
+                rupiah = split[0].substr(0, sisa),
+                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+            if (ribuan) {
+                let separator = sisa ? '.' : '';
+                rupiah += separator + ribuan.join('.');
+            }
+
+            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
+            return prefix + rupiah;
+        }
+
         function updateRemoveButtons() {
             const items = document.querySelectorAll('.resep-item');
             const removeButtons = document.querySelectorAll('.remove-item');
@@ -97,74 +113,68 @@
             }
         }
 
-        document.getElementById('tambah-obat').addEventListener('click', function() {
-            const wrapper = document.getElementById('resep-obat-wrapper');
+        function bindHargaListener(input) {
+            input.addEventListener('input', function() {
+                let index = this.dataset.index;
+                this.value = formatRupiah(this.value);
 
-            const html = `
-    <div class="row mb-2 resep-item align-items-center">
-        <div class="col-md-4">
-            <input type="text" name="resep[${index}][nama]" class="form-control" placeholder="Nama Obat" required>
-        </div>
-        <div class="col-md-3">
-            <input type="number" name="resep[${index}][jumlah]" class="form-control" placeholder="Jumlah" required>
-        </div>
-        <div class="col-md-4">
-            <input type="text" name="resep[${index}][harga_display]" class="form-control harga-display" placeholder="Harga (Rp)" required data-index="${index}">
-            <input type="hidden" name="resep[${index}][harga]" class="harga" data-index="${index}" />
-        </div>
-        <div class="col-md-1">
-            <button type="button" class="btn btn-danger btn-sm remove-item">Hapus</button>
-        </div>
-    </div>`;
-
-            wrapper.insertAdjacentHTML('beforeend', html);
-
-            // Bind event listener ke input harga-display yang baru
-            let newHargaDisplay = wrapper.querySelector(`.harga-display[data-index="${index}"]`);
-            if (newHargaDisplay) {
-                newHargaDisplay.addEventListener('input', function() {
-                    let val = this.value;
-                    this.value = formatRupiah(val);
-
-                    let angka = this.value.replace(/[^0-9]/g, '');
-                    let hiddenInput = document.querySelector('.harga[data-index="' + index + '"]');
-                    if (hiddenInput) {
-                        hiddenInput.value = angka;
-                    }
-                });
-            }
-
-            index++;
-            updateRemoveButtons();
-        });
-
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-item')) {
-                e.target.closest('.resep-item').remove();
-                updateRemoveButtons();
-            }
-        });
-
-        // Fungsi format rupiah perlu di luar supaya bisa dipakai
-        function formatRupiah(angka) {
-            let number_string = angka.replace(/[^,\d]/g, '').toString();
-            let split = number_string.split(',');
-            let sisa = split[0].length % 3;
-            let rupiah = split[0].substr(0, sisa);
-            let ribuan = split[0].substr(sisa).match(/\d{3}/gi);
-
-            if (ribuan) {
-                let separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
-            }
-
-            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
-            return rupiah;
+                const angka = this.value.replace(/[^0-9]/g, '');
+                const hiddenInput = document.querySelector('.harga[data-index="' + index + '"]');
+                if (hiddenInput) {
+                    hiddenInput.value = angka;
+                }
+            });
         }
 
-        // Jalankan saat halaman pertama kali dimuat
-        document.addEventListener('DOMContentLoaded', updateRemoveButtons);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Bind semua input harga-display awal
+            document.querySelectorAll('.harga-display').forEach(bindHargaListener);
+
+            // Tombol tambah obat
+            document.getElementById('tambah-obat').addEventListener('click', function() {
+                const wrapper = document.getElementById('resep-obat-wrapper');
+
+                const html = `
+            <div class="row mb-2 resep-item align-items-center">
+                <div class="col-md-4">
+                    <input type="text" name="resep[${index}][nama]" class="form-control" placeholder="Nama Obat" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="number" name="resep[${index}][jumlah]" class="form-control" placeholder="Jumlah" required>
+                </div>
+                <div class="col-md-4">
+                    <input type="text" name="resep[${index}][harga_display]" class="form-control harga-display" placeholder="Harga (Rp)" required data-index="${index}">
+                    <input type="hidden" name="resep[${index}][harga]" class="harga" data-index="${index}" />
+                </div>
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-danger btn-sm remove-item">Hapus</button>
+                </div>
+            </div>`;
+
+                wrapper.insertAdjacentHTML('beforeend', html);
+
+                // Bind event listener ke input harga-display yang baru
+                const newInput = wrapper.querySelector(`.harga-display[data-index="${index}"]`);
+                if (newInput) {
+                    bindHargaListener(newInput);
+                }
+
+                index++;
+                updateRemoveButtons();
+            });
+
+            // Tombol hapus
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('remove-item')) {
+                    e.target.closest('.resep-item').remove();
+                    updateRemoveButtons();
+                }
+            });
+
+            updateRemoveButtons();
+        });
     </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const rupiahInput = document.querySelector('#biaya_display');
