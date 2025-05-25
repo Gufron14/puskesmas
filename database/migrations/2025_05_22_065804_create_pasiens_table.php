@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nama_pasien');
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
             $table->integer('usia');
-            $table->string('nik', 16)->unique();
+            $table->string('nik', 16)->nullable();
             $table->text('alamat')->nullable();
             $table->string('telepon')->nullable();
             $table->date('tanggal_antrian')->nullable();

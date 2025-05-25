@@ -6,6 +6,8 @@
             <div class="mb-5">
                 <h2 class="section-heading text-uppercase">Pendaftaran Pasien Baru</h2>
             </div>
+            <x-error-validation-message errors="$errors" />
+
             <form action="{{ route('daftar.post') }}" method="POST">
                 @csrf
 

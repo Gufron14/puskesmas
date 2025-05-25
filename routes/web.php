@@ -24,6 +24,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/profil', [UserController::class, 'profil'])->name('profil');
     Route::post('/profil/update', [UserController::class, 'update'])->name('profil.update');
+    Route::post('/saran-keluhan', [MasukanController::class, 'store'])->name('masukan.post');
+    Route::post('/daftar', [PendaftaranController::class, 'store'])->name('daftar.post');
 });
 
 // Khusus admin
@@ -46,10 +48,6 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/laporan/bulanan', [RekamMedisController::class, 'cetakLaporanBulanan'])->name('laporan.bulanan');
 });
 
-    Route::get('/', [HomeController::class, 'frontend'])->name('frontend');
-
-
     Route::get('/saran-keluhan', [MasukanController::class, 'index'])->name('masukan');
-    Route::post('/saran-keluhan', [MasukanController::class, 'store'])->name('masukan.post');
     Route::get('/daftar', [PendaftaranController::class, 'index'])->name('daftar');
-    Route::post('/daftar', [PendaftaranController::class, 'store'])->name('daftar.post');
+    Route::get('/', [HomeController::class, 'frontend'])->name('frontend');

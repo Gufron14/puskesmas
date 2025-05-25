@@ -12,6 +12,8 @@
     <!-- Services-->
     <section class="page-section bg-white" id="services">
         <div class="container">
+            <x-error-validation-message errors="$errors" />
+
             <form id="masukanForm" action="{{ route('masukan.post') }}" method="POST">
                 @csrf
                 <div class="mb-3">
@@ -32,7 +34,6 @@
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-
         document.getElementById('masukanForm').addEventListener('submit', function(e) {
             const masukan = document.getElementById('saran').value.trim();
             const keluhan = document.getElementById('keluhan').value.trim();

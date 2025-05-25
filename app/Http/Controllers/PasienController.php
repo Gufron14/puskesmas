@@ -63,7 +63,7 @@ class PasienController extends Controller
             'nama_pasien'   => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'usia'          => 'required|integer|min:0',
-            'nik'           => 'required|digits:16|unique:pasiens,nik',
+            'nik'           => 'required|digits:16',
             'alamat'        => 'nullable|string',
             'telepon'       => 'nullable|string|max:20',
             'nomor_antrian' => [
@@ -123,7 +123,7 @@ class PasienController extends Controller
             'nama_pasien'   => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'usia'          => 'required|integer|min:0',
-            'nik'           => 'required|digits:16|unique:pasiens,nik,' . $pasien->id,
+            'nik'           => 'required|digits:16',
             'alamat'        => 'nullable|string',
             'telepon'       => 'nullable|string|max:20',
         ]);
