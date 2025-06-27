@@ -74,7 +74,7 @@
                     @foreach ($pembayarans as $item)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->pemeriksaan->pasien->nama_pasien }}</td>
+                            <td>{{ $item->pemeriksaan->pasien->user->name }}</td>
                             <td>{{ \Carbon\Carbon::parse($item->pemeriksaan->tanggal_pemeriksaan)->translatedFormat('l, d F Y, H:i') }}
                             </td>
                             <td>Rp{{ number_format($item->total_obat, 0, ',', '.') }}</td>
@@ -84,12 +84,7 @@
                             <td>Rp{{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
                             <td>Rp{{ number_format($item->kembalian, 0, ',', '.') }}</td>
                             <td>
-                                <button class="btn btn-danger" onclick="deleteActivity({{ $item->id }})">Hapus</button>
-                                <form id="Hapus{{ $item->id }}" action="{{ route('pembayaran.destroy', $item->id) }}"
-                                    method="POST" style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
+
                                 <a href="{{ route('pembayaran.invoice', $item->id) }}"
                                     class="btn btn-success text-white px-3" target="_blank">Cetak</a>
                             </td>

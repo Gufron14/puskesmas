@@ -14,7 +14,7 @@
                         @foreach ($pasiens as $pasien)
                             <option value="{{ $pasien->id }}"
                                 {{ $pasien->id == $pemeriksaan->pasien_id ? 'selected' : '' }}>
-                                {{ $pasien->nama_pasien }} - No. Antrian: {{ $pasien->nomor_antrian }}
+                                {{ $pasien->user->name }} - {{ $pasien->user->nik }}
                             </option>
                         @endforeach
                     </optgroup>
@@ -23,9 +23,7 @@
 
             <div class="form-group mb-4">
                 <label class="font-weight-bold" for="tanggal_pemeriksaan">Tanggal Pemeriksaan</label>
-                <input type="datetime-local" id="tanggal_pemeriksaan" name="tanggal_pemeriksaan"
-                    value="{{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->format('Y-m-d\TH:i') }}"
-                    class="form-control">
+                <input type="text" id="tanggal_pemeriksaan" name="tanggal_pemeriksaan" class="form-control" value="{{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->format('Y-m-d') }}" placeholder="Pilih tanggal pemeriksaan" autocomplete="off" required readonly>
             </div>
 
             <div class="mb-3">
@@ -195,3 +193,24 @@
         });
     </script>
 @endsection
+
+@push('scripts')
+<!-- jQuery (CDN) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Datepicker CSS (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
+<!-- Datepicker JS (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#tanggal_pemeriksaan').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            startDate: new Date()
+        }).on('focus click', function () {
+            $(this).datepicker('show');
+        });
+    });
+</script>
+@endpush

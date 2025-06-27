@@ -102,17 +102,17 @@
             <tr>
                 <td>Nama</td>
                 <td>:</td>
-                <td>{{ $pemeriksaan->pasien->nama_pasien }}</td>
+                <td>{{ $pemeriksaan->pasien->user->name }}</td>
             </tr>
             <tr>
                 <td>Nama</td>
                 <td>:</td>
-                <td>{{ $pemeriksaan->pasien->nik }}</td>
+                <td>{{ $pemeriksaan->pasien->user->nik }}</td>
             </tr>
             <tr>
                 <td>Alamat</td>
                 <td>:</td>
-                <td>{{ $pemeriksaan->pasien->alamat }}</td>
+                <td>{{ $pemeriksaan->pasien->user->alamat }}</td>
             </tr>
             <tr>
                 <td>Tanggal Periksa</td>

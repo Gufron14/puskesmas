@@ -13,7 +13,10 @@
                     <a class="nav-link" href="{{ route('frontend') }}">Beranda</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('daftar') }}">Pendaftaran</a>
+                    <a class="nav-link" href="{{ route('daftar') }}">Pelayanan</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('riwayat') }}">Rekam Medis</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('masukan') }}">Masukan</a>

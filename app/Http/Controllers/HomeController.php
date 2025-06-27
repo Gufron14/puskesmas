@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Pasien;
 use App\Models\Masukan;
 use App\Models\Pembayaran;
@@ -13,10 +14,11 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $pasien     = Pasien::count();
+        $pasien     = User::where('role','User')->count();
+        $antrian    = Pasien::count();
         $rekamedis  = Pemeriksaan::count();
         $totaluang  = Pembayaran::sum('jumlah_bayar');
-        return view('backend.pages.dashboard', compact('pasien', 'rekamedis', 'totaluang'));
+        return view('backend.pages.dashboard', compact('pasien', 'rekamedis', 'totaluang', 'antrian'));
     }
     public function frontend()
     {

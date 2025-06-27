@@ -7,15 +7,13 @@ use App\Models\Pembayaran;
 use App\Models\Pemeriksaan;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Auth;
 
 class RekamMedisController extends Controller
 {
     public function index()
     {
-        $tanggal = now()->toDateString();
-
         $pemeriksaans = Pemeriksaan::with('pasien')
-            ->whereDate('tanggal_pemeriksaan', $tanggal)
             ->orderBy('created_at', 'DESC')
             ->get()
             ->map(function ($item) {
@@ -30,7 +28,7 @@ class RekamMedisController extends Controller
     }
     public function edit($id)
     {
-                $tanggal = now()->toDateString(); // hari ini
+        $tanggal = now()->toDateString(); // hari ini
         $pasiens = Pasien::where('tanggal_antrian', $tanggal)
             ->orderBy('nomor_antrian')
             ->get();
@@ -115,5 +113,31 @@ class RekamMedisController extends Controller
 
         return $pdf->stream('laporan-keuangan-' . strtolower($nama_bulan) . '-' . $tahun . '.pdf');
     }
+
+public function rekamMedis()
+{
+    $user = Auth::user();
+    $pemeriksaans = collect(); // Default kosong untuk guest
+
+    if ($user) {
+        $pemeriksaans = Pemeriksaan::with('pasien')
+            ->whereHas('pasien', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->orderBy('created_at', 'DESC')
+            ->get()
+            ->map(function ($item) {
+                $item->resep_decoded = json_decode($item->resep_obat, true) ?? [];
+                $item->total_obat = collect($item->resep_decoded)->sum(function ($r) {
+                    return ($r['jumlah'] ?? 0) * ($r['harga'] ?? 0);
+                });
+                return $item;
+            });
+    }
+
+    return view('frontend.rekammedis', compact('pemeriksaans', 'user'));
+}
+
+
 
 }

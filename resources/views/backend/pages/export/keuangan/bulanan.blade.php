@@ -70,7 +70,7 @@
             @foreach ($pembayarans as $key => $item)
                 <tr>
                     <td>{{ $key + 1 }}</td>
-                    <td>{{ $item->pemeriksaan->pasien->nama_pasien ?? '-' }}</td>
+                    <td>{{ $item->pemeriksaan->pasien->user->name ?? '-' }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->pemeriksaan->tanggal_pemeriksaan)->translatedFormat('d M Y, H:i') }}
                     </td>
                     <td>Rp{{ number_format($item->total_obat, 0, ',', '.') }}</td>

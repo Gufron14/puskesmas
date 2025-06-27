@@ -22,16 +22,16 @@
             <span>Menu</span>
         </p>
         <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pendaftaran') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('pendaftaran') }}">
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pasien.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pasien.index') }}">
                     <i class="fe fe-list fe-16"></i>
-                    <span class="ml-3 item-text font-weight-bold">Pendaftaran</span>
+                    <span class="ml-3 item-text font-weight-bold">Data Pasien</span>
                 </a>
             </li>
-            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pasien.index') ? 'active' : '' }}">
-                <a class="nav-link" href="{{ route('pasien.index') }}">
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('antrian.*') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('antrian.index') }}">
                     <i class="fe fe-folder-plus fe-16"></i>
-                    <span class="ml-3 item-text font-weight-bold">Data Pasien</span>
+                    <span class="ml-3 item-text font-weight-bold">Data Antrian</span>
                 </a>
             </li>
             <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pemeriksaan') ? 'active' : '' }}">
@@ -53,10 +53,17 @@
                     <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
                 </a>
             </li>
-            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('datalaporan') ? 'active' : '' }}"">
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('datalaporan') ? 'active' : '' }}">
                 <a class="nav-link" href="{{ route('datalaporan') }}">
                     <i class="fe fe-printer fe-16"></i>
                     <span class="ml-3 item-text font-weight-bold">Data Laporan</span>
+
+                </a>
+            </li>
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pengaturan.antrian') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('pengaturan.antrian') }}">
+                    <i class="fe fe-settings fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Antrian</span>
 
                 </a>
             </li>

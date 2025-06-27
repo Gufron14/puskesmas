@@ -77,7 +77,7 @@
         <h2>Invoice Pembayaran</h2>
 
         <div class="info">
-            <p><strong>Nama Pasien:</strong> {{ $pembayaran->pemeriksaan->pasien->nama_pasien }}</p>
+            <p><strong>Nama Pasien:</strong> {{ $pembayaran->pemeriksaan->pasien->user->name }}</p>
             <p><strong>Tanggal Pemeriksaan:</strong>
                 {{ \Carbon\Carbon::parse($pembayaran->pemeriksaan->tanggal_pemeriksaan)->translatedFormat('l, d F Y, H:i') }}
             </p>

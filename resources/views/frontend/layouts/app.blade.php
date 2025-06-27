@@ -10,6 +10,7 @@
     @yield('content')
     @include('frontend.layouts.partials.footer')
     @include('frontend.layouts.script.botscript')
+    @stack('scripts')
 </body>
 
 </html>

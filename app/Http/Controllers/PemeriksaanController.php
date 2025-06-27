@@ -10,12 +10,7 @@ class PemeriksaanController extends Controller
 {
     public function index()
     {
-        $tanggal = now()->toDateString(); // hari ini
-        $pasiens = Pasien::where('tanggal_antrian', $tanggal)
-            ->where('status', 'menunggu')
-            ->orderBy('nomor_antrian')
-            ->get();
-
+        $pasiens = Pasien::orderBy('created_at', 'DESC')->get();
         return view('backend.pages.pemeriksaan', compact('pasiens'));
     }
 

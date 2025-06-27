@@ -21,9 +21,9 @@
             @method('PUT')
 
             <div class="mb-3">
-                <label for="name" class="form-label">Nama Pasien</label>
-                <input type="text" class="form-control" name="name"
-                    value="{{ old('name', $pasien->name) }}" placeholder="Masukan nama lengkap" required>
+                <label for="nama_pasien" class="form-label">Nama Pasien</label>
+                <input type="text" class="form-control" name="nama_pasien"
+                    value="{{ old('nama_pasien', $pasien->nama_pasien) }}" placeholder="Masukan nama lengkap" required>
             </div>
 
             <div class="mb-3">
@@ -48,10 +48,14 @@
                 <label for="usia" class="form-label">Usia</label>
                 <input type="number" class="form-control" name="usia" value="{{ old('usia', $pasien->usia) }}" required>
             </div>
+            <div class="mb-3">
+                <label for="nomor_antrian" class="form-label">Nomor Antrian</label>
+                <input type="number" class="form-control" name="nomor_antrian" value="{{ old('nomor_antrian', $pasien->nomor_antrian) }}" disabled>
+            </div>
 
             <div class="mb-3">
                 <label for="nik" class="form-label">NIK</label>
-                <input type="text" class="form-control" name="nik" value="{{ old('nik', $pasien->nik) }}" maxlength="16"
+                <input type="text" class="form-control" name="nik" value="{{ old('nik', $pasien->nik) }}"
                     placeholder="Masukan 16 digit NIK" required>
             </div>
 
@@ -67,24 +71,6 @@
                     placeholder="Masukan nomor telepon aktif (Contoh: 081234567890)" required autocomplete="tel" autofocus
                     pattern="^08[0-9]{8,12}" title="Nomor harus dimulai dari 08 dan hanya angka">
             </div>
-            <div class="mb-3">
-                <label class="text-dark font-weight-bold" for="password">Kata Sandi <small class="text-danger">(Kosongkan jika tidak ingin merubah sandi)</small></label>
-                <div class="input-group">
-                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
-                        name="password" placeholder="Masukan kata sandi" autocomplete="current-password">
-
-                    @error('password')
-                        <span class="invalid-feedback text-start" role="alert">
-                            <strong>{{ $message }}</strong>
-                        </span>
-                    @enderror
-                </div>
-                <div class="custom-control custom-checkbox mt-2">
-                    <input type="checkbox" class="custom-control-input" id="showHidePass">
-                    <label class="custom-control-label text-dark" for="showHidePass">Tampilkan
-                        Sandi</label>
-                </div>
-            </div>
 
             <div class="float-right">
                 <a href="{{ route('pasien.index') }}" class="btn btn-danger">Kembali</a>
@@ -92,29 +78,4 @@
             </div>
         </form>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkbox = document.getElementById('showHidePass');
-            const passwordInput = document.getElementById('password');
-
-            checkbox.addEventListener('change', function() {
-                if (this.checked) {
-                    passwordInput.type = 'text';
-                } else {
-                    passwordInput.type = 'password';
-                }
-            });
-        });
-        document.addEventListener('DOMContentLoaded', function() {
-            const input = document.getElementById('telepon');
-            input.addEventListener('input', function() {
-                this.value = this.value.replace(/[^0-9]/g, ''); // hanya angka
-                if (!this.value.startsWith('08')) {
-                    this.setCustomValidity("Nomor telepon harus dimulai dari 08");
-                } else {
-                    this.setCustomValidity("");
-                }
-            });
-        });
-    </script>
 @endsection

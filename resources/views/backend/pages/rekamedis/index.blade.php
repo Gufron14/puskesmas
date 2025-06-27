@@ -29,8 +29,8 @@
                         @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->pasien->nama_pasien ?? '-' }}</td>
-                            <td>{{ $item->pasien->nik ?? '-' }}</td>
+                            <td>{{ $item->pasien->user->name ?? '-' }}</td>
+                            <td>{{ $item->pasien->user->nik ?? '-' }}</td>
                             <td>{{ $item->gejala }}</td>
                             <td>{{ $item->tensi_sistolik }} / {{ $item->tensi_diastolik }}</td>
                             <td>{{ $item->catatan_dokter }}</td>
@@ -49,14 +49,8 @@
                             </td>
                             <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
                             <td>
-                                <!-- Aksi seperti tombol lihat/cetak/edit -->
-                                <button class="btn btn-danger" onclick="deleteActivity({{ $item->id }})">Hapus</button>
-                                <form id="Hapus{{ $item->id }}" action="{{ route('pemeriksaan.destroy', $item->id) }}"
-                                    method="POST" style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                                <a href="{{ route('rekamedis.edit', $item->pasien_id) }}" 
+
+                                <a href="{{ route('rekamedis.edit', $item->id) }}"
                                     class="btn btn-primary text-white">Edit</a>
                                 <a href="{{ route('pemeriksaan.exportPdf', $item->pasien_id) }}" target="_blank"
                                     class="btn btn-success text-white">Cetak</a>

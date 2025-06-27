@@ -20,8 +20,8 @@
             @csrf
 
             <div class="mb-3">
-                <label for="nama_pasien" class="form-label text-dark font-weight-bold">Nama Pasien</label>
-                <input type="text" class="form-control" name="nama_pasien" value="{{ old('nama_pasien') }}"
+                <label for="name" class="form-label text-dark font-weight-bold">Nama Pasien</label>
+                <input type="text" class="form-control" name="name" value="{{ old('name') }}"
                     placeholder="Masukan nama lengkap" required>
             </div>
 
@@ -43,35 +43,12 @@
 
             <div class="mb-3">
                 <label for="usia" class="form-label text-dark font-weight-bold">Usia</label>
-                <input type="number" class="form-control" min="1" name="usia" value="{{ old('usia') }}" required>
+                <input type="number" class="form-control" min="1" name="usia" value="{{ old('usia') }}"
+                    required>
             </div>
-            <div class="mb-3">
-                <label for="noAntrian" class="form-label">Pilih No Antrian</label>
-                <select name="nomor_antrian" id="noAntrian" class="form-control" required>
-                    @if ($sisaAntrian > 0)
-                        <option value="" selected disabled>-- Pilih Nomor Antrian --</option>
-                        @foreach ($nomorWaktu as $item)
-                            <option value="{{ $item['nomor'] }}">
-                               Antrian Nomor {{ $item['nomor'] }} ({{ $item['waktu'] }})
-                            </option>
-                        @endforeach
-                    @else
-                        <option value="">Maaf, kuota antrian hari ini penuh.</option>
-                    @endif
-                </select>
-                <div class="form-text text-danger">
-                    @if ($sisaAntrian > 0)
-                        Sisa antrian hari ini: {{ $sisaAntrian }}
-                    @else
-                        Tidak ada sisa antrian untuk hari ini.
-                    @endif
-                </div>
-            </div>
-
-
             <div class="mb-3">
                 <label for="nik" class="form-label text-dark font-weight-bold">NIK</label>
-                <input type="text" class="form-control" name="nik" value="{{ old('nik') }}"
+                <input type="text" class="form-control" name="nik" value="{{ old('nik') }}" maxlength="16"
                     placeholder="Masukan 16 digit NIK" required>
             </div>
 
@@ -86,10 +63,53 @@
                     placeholder="Masukan nomor telepon aktif (Contoh: 081234567890)" required autocomplete="tel" autofocus
                     pattern="^08[0-9]{8,12}" title="Nomor harus dimulai dari 08 dan hanya angka">
             </div>
+            <div class="mb-3">
+                <label class="text-dark font-weight-bold" for="password">Kata Sandi</label>
+                <div class="input-group">
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror"
+                        name="password" placeholder="Masukan kata sandi" required autocomplete="current-password">
+
+                    @error('password')
+                        <span class="invalid-feedback text-start" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+                <div class="custom-control custom-checkbox mt-2">
+                    <input type="checkbox" class="custom-control-input" id="showHidePass">
+                    <label class="custom-control-label text-dark" for="showHidePass">Tampilkan
+                        Sandi</label>
+                </div>
+            </div>
             <div class="float-right">
                 <a href="{{ route('pasien.index') }}" class="btn btn-danger">Kembali</a>
                 <button type="submit" class="btn btn-success text-white">Simpan</button>
             </div>
         </form>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('showHidePass');
+            const passwordInput = document.getElementById('password');
+
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    passwordInput.type = 'text';
+                } else {
+                    passwordInput.type = 'password';
+                }
+            });
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.getElementById('telepon');
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, ''); // hanya angka
+                if (!this.value.startsWith('08')) {
+                    this.setCustomValidity("Nomor telepon harus dimulai dari 08");
+                } else {
+                    this.setCustomValidity("");
+                }
+            });
+        });
+    </script>
 @endsection

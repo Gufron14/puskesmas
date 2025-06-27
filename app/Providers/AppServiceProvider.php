@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Antrian;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Share data ke semua view
+        if (Schema::hasTable('antrians')) {
+            $antrian = Antrian::first(); // hanya ambil 1 antrian
+            View::share('antrian', $antrian);
+        }
     }
 }

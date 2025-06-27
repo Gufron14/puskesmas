@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PasienController;
+use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\MasukanController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\PembayaranController;
@@ -23,7 +24,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/profil', [UserController::class, 'profil'])->name('profil');
-    Route::post('/profil/update', [UserController::class, 'update'])->name('profil.update');
+    Route::post('/profil/update', [UserController::class, 'updateProfile'])->name('profil.update');
     Route::post('/saran-keluhan', [MasukanController::class, 'store'])->name('masukan.post');
     Route::post('/daftar', [PendaftaranController::class, 'store'])->name('daftar.post');
 });
@@ -31,8 +32,10 @@ Route::middleware(['auth'])->group(function () {
 // Khusus admin
 Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
-    Route::resource('pasien', PasienController::class);
-    Route::get('/pendaftaran', [PasienController::class, 'create'])->name('pendaftaran');
+    Route::resource('pasien', UserController::class);
+    Route::resource('antrian', PasienController::class);
+    Route::get('/pengaturan/antrian', [AntrianController::class, 'index'])->name('pengaturan.antrian');
+    Route::post('/antrian/post', [AntrianController::class, 'storeOrUpdate'])->name('pengaturan.antrian.store');
     Route::get('/pemeriksaan', [PemeriksaanController::class, 'index'])->name('pemeriksaan');
     Route::post('/pemeriksaan', [PemeriksaanController::class, 'store'])->name('pemeriksaan.post');
     Route::delete('/pemeriksaan/{pemeriksaan}', [PemeriksaanController::class, 'destroy'])->name('pemeriksaan.destroy');
@@ -42,12 +45,13 @@ Route::middleware(['auth', 'role:Admin'])->group(function () {
     Route::get('/rekamedis', [RekamMedisController::class, 'index'])->name('rekamedis');
     Route::get('/rekamedis/edit/{id}', [RekamMedisController::class, 'edit'])->name('rekamedis.edit');
     Route::put('/rekamedis/update/{id}', [RekamMedisController::class, 'update'])->name('rekamedis.update');
-    Route::get('/pemeriksaan/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
     Route::get('/data-laporan', [RekamMedisController::class, 'keuangan'])->name('datalaporan');
     Route::get('/pembayaran/invoice/{id}', [RekamMedisController::class, 'cetakInvoice'])->name('pembayaran.invoice');
     Route::get('/laporan/bulanan', [RekamMedisController::class, 'cetakLaporanBulanan'])->name('laporan.bulanan');
 });
+    Route::get('/pemeriksaan/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
 
     Route::get('/saran-keluhan', [MasukanController::class, 'index'])->name('masukan');
-    Route::get('/daftar', [PendaftaranController::class, 'index'])->name('daftar');
+    Route::get('/pelayanan', [PendaftaranController::class, 'index'])->name('daftar');
+    Route::get('/riwayat/rekam-medis', [RekamMedisController::class, 'rekamMedis'])->name('riwayat');
     Route::get('/', [HomeController::class, 'frontend'])->name('frontend');

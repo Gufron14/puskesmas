@@ -4,10 +4,10 @@
     <div class="container-fluid">
         <div class="row align-items-center justify-content-between mb-4">
             <div class="col">
-                <h4 class="font-weight-bold text-dark">Data Pasien Keseluruhan</h4>
+                <h4 class="font-weight-bold text-dark">Daftar Semua Pasien</h4>
             </div>
             <div class="col-auto">
-                <a href="{{ route('pasien.create') }}" class="btn btn-success text-white font-weight-bold">Tambah Pasien <i
+                <a href="{{ route('pendaftaran') }}" class="btn btn-success text-white font-weight-bold">Tambah Pasien <i
                         class="fe fe-plus fe-12"></i></a>
             </div>
         </div>
@@ -47,8 +47,8 @@
                             <td>{{ $pasien->alamat }}</td>
                             <td>{{ $pasien->telepon }}</td>
                             <td>
-                                <a type="button" class="btn  btn-primary"
-                                    href="{{ route('pasien.edit', $pasien->id) }}"><i class="fe fe-edit fe-16"></i></a>
+                                <a type="button" class="btn  btn-primary" href="{{ route('pasien.edit', $pasien->id) }}"><i
+                                        class="fe fe-edit fe-16"></i></a>
                                 <button class="btn btn-danger" onclick="deleteActivity({{ $pasien->id }})"><i
                                         class="fe fe-trash fe-16"></i></button>
                                 <form id="Hapus{{ $pasien->id }}" action="{{ route('pasien.destroy', $pasien->id) }}"

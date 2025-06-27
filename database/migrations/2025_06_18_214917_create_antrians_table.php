@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pasiens', function (Blueprint $table) {
+        Schema::create('antrians', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->date('tanggal_antrian')->nullable();
-            $table->integer('nomor_antrian')->nullable();
-            $table->string('status')->default('menunggu');
+            $table->integer('jumlah')->default(0);
+            $table->enum('status', ['on', 'off'])->default('on');
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pasiens');
+        Schema::dropIfExists('antrians');
     }
 };

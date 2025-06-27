@@ -11,15 +11,15 @@
                 <select class="form-control select2" name="pasien_id" id="simple-select2">
                     <optgroup>
                         @foreach ($pasiens as $pasien)
-                            <option value="{{ $pasien->id }}">{{ $pasien->nama_pasien }} - No. Antrian:
-                                {{ $pasien->nomor_antrian }}</option>
+                            <option value="{{ $pasien->id }}">{{ $pasien->user->name }} -
+                                {{ $pasien->user->nik }}</option>
                         @endforeach
                     </optgroup>
                 </select>
             </div>
             <div class="form-group mb-4">
                 <label class="font-weight-bold" for="tanggal_pemeriksaan">Tanggal Pemeriksaan</label>
-                <input type="datetime-local" id="tanggal_pemeriksaan" name="tanggal_pemeriksaan" class="form-control">
+                <input type="text" id="tanggal_pemeriksaan" name="tanggal_pemeriksaan" class="form-control" placeholder="Pilih tanggal pemeriksaan" autocomplete="off" required readonly>
             </div>
             <div class="mb-3">
                 <label for="tensi_darah" class="form-label">Tensi Darah</label>
@@ -233,3 +233,24 @@
         });
     </script>
 @endsection
+
+@push('scripts')
+<!-- jQuery (CDN) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Datepicker CSS (CDN) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
+<!-- Datepicker JS (CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#tanggal_pemeriksaan').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true,
+            startDate: new Date()
+        }).on('focus click', function () {
+            $(this).datepicker('show');
+        });
+    });
+</script>
+@endpush

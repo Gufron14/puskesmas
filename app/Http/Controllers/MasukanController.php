@@ -25,6 +25,6 @@ class MasukanController extends Controller
             'keluhan' => $request->keluhan,
         ]);
 
-        return redirect()->route('masukan')->with('success', 'Masukan dan keluhan berhasil dikirim.');
+        return redirect()->route('frontend')->with('success', 'Masukan dan keluhan berhasil dikirim.');
     }
 }

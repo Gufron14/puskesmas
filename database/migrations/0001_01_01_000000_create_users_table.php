@@ -20,6 +20,10 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('foto')->nullable();
             $table->string('role')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
+            $table->integer('usia')->nullable();
+            $table->string('nik', 16)->nullable();
+            $table->text('alamat')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
