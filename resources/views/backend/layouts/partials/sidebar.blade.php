@@ -43,7 +43,14 @@
                         <span class="ml-3 item-text font-weight-bold">Pemeriksaan</span>
                     </a>
                 </li>
-                {{-- Link Obat --}}
+            @endif
+            <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('rekamedis') ? 'active' : '' }}">
+                <a class="nav-link" href="{{ route('rekamedis') }}">
+                    <i class="fe fe-inbox fe-16"></i>
+                    <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
+                </a>
+            </li>
+            @if (auth()->check() && auth()->user()->role == 'Mantri')  
                 <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('obat') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('obat.index') }}">
                         <i class="fe fe-box fe-16"></i>
@@ -51,12 +58,6 @@
                     </a>
                 </li>
             @endif
-                <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('rekamedis') ? 'active' : '' }}">
-                    <a class="nav-link" href="{{ route('rekamedis') }}">
-                        <i class="fe fe-inbox fe-16"></i>
-                        <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
-                    </a>
-                </li>
             @if (auth()->check() && auth()->user()->role == 'Admin')
                 <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pembayaran') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('pembayaran') }}">
@@ -68,14 +69,12 @@
                     <a class="nav-link" href="{{ route('datalaporan') }}">
                         <i class="fe fe-printer fe-16"></i>
                         <span class="ml-3 item-text font-weight-bold">Data Laporan</span>
-
                     </a>
                 </li>
                 <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pengaturan.antrian') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('pengaturan.antrian') }}">
                         <i class="fe fe-settings fe-16"></i>
                         <span class="ml-3 item-text font-weight-bold">Antrian</span>
-
                     </a>
                 </li>
             @endif
