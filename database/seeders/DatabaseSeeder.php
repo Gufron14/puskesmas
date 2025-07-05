@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
     {
         // Call Seeder Lain
         $this->call([
-            UserSeeder::class,
+            // UserSeeder::class,
             JenisObatSeeder::class,
             ObatSeeder::class,
         ]);
