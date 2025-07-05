@@ -58,8 +58,10 @@ Route::middleware(['auth', 'role:Admin,Mantri'])->group(function () {
     Route::get('/laporan/bulanan', [RekamMedisController::class, 'cetakLaporanBulanan'])->name('laporan.bulanan');
     Route::delete('/pasien/{id}', [PasienController::class, 'destroy'])->name('pasien.destroy');
 
+    Route::get('/admin/rekamedis/print-laporan', [RekamMedisController::class, 'printLaporan'])->name('rekamedis.print');
+
     // Print routes
-    Route::get('/pemeriksaan/print/{id}', [RekamMedisController::class, 'printPemeriksaan'])->name('pemeriksaan.print');
+    Route::get('/admin/rekamedis/print-pemeriksaan/{id}', [RekamMedisController::class, 'printPemeriksaan'])->name('pemeriksaan.print');
     Route::get('/pembayaran/print/{id}', [RekamMedisController::class, 'printInvoice'])->name('pembayaran.print');
     Route::get('/laporan/print-bulanan', [RekamMedisController::class, 'printLaporanBulanan'])->name('laporan.print');
 

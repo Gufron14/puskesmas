@@ -221,7 +221,39 @@ class RekamMedisController extends Controller
         }
     }
 
-    // Show Hasil Pemeriksaan
+    public function printLaporan(Request $request)
+    {
+        $tanggalMulai = $request->tanggal_mulai ?? date('Y-m-01');
+        $tanggalSelesai = $request->tanggal_selesai ?? date('Y-m-d');
+
+        $pemeriksaans = Pemeriksaan::with(['user', 'pasien.user'])
+            ->whereBetween('waktu_pemeriksaan', [$tanggalMulai . ' 00:00:00', $tanggalSelesai . ' 23:59:59'])
+            ->orderBy('waktu_pemeriksaan', 'DESC')
+            ->get()
+            ->map(function ($item) {
+                $item->resep_decoded = json_decode($item->resep_obat, true) ?? [];
+                $item->total_obat = collect($item->resep_decoded)->sum(function ($r) {
+                    return ($r['jumlah'] ?? 0) * ($r['harga'] ?? 0);
+                });
+
+                $item->resep_formatted = collect($item->resep_decoded)->map(function ($r) {
+                    if (!isset($r['jenis_obat']) && isset($r['obat_id'])) {
+                        $obat = Obat::with('jenisObat')->find($r['obat_id']);
+                        if ($obat && $obat->jenisObat) {
+                            $r['jenis_obat'] = $obat->jenisObat->jenis_obat;
+                        } else {
+                            $r['jenis_obat'] = $r['jenis_obat'] ?? 'Tidak Diketahui';
+                        }
+                    }
+                    $r['keterangan_display'] = $r['keterangan_makan'] === 'sesudah_makan' ? 'Sesudah Makan' : 'Sebelum Makan';
+                    return $r;
+                });
+
+                return $item;
+            });
+
+        return view('backend.pages.print.rekamedis', compact('pemeriksaans', 'tanggalMulai', 'tanggalSelesai'));
+    }
 
     public function exportPdf($id)
     {
@@ -260,7 +292,7 @@ class RekamMedisController extends Controller
             return ($r['jumlah'] ?? 0) * ($r['harga'] ?? 0);
         });
 
-        return view('backend.pages.print.pemeriksaan', compact('pemeriksaan'));
+        return view('backend.pages.print.rekamedis', compact('pemeriksaan'));
     }
 
     public function keuangan()
