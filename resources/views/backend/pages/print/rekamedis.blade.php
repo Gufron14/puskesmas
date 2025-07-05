@@ -74,8 +74,8 @@
             <tr>
                 <th width="5%">No</th>
                 <th width="20%">Nama Pasien</th>
-                <th width="10%">Suhu</th>
-                <th width="15%">Tensi</th>
+                {{-- <th width="10%">Suhu</th>
+                <th width="15%">Tensi</th> --}}
                 <th width="20%">Resep Obat</th>
                 <th width="15%">Tanggal</th>
                 <th width="15%">Total Bayar</th>
@@ -92,8 +92,8 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $item->user->name ?? '-' }}</td>
-                    <td class="text-center">{{ $item->suhu }}°C</td>
-                    <td class="text-center">{{ $item->tensi_sistolik }}/{{ $item->tensi_diastolik }} mmHg</td>
+                    {{-- <td class="text-center">{{ $item->suhu }}°C</td>
+                    <td class="text-center">{{ $item->tensi_sistolik }}/{{ $item->tensi_diastolik }} mmHg</td> --}}
                     <td>
                         @if (count($item->resep_formatted))
                             @foreach ($item->resep_formatted as $r)
@@ -117,7 +117,7 @@
         @if($pemeriksaans->count() > 0)
         <tfoot>
             <tr>
-                <th colspan="6" class="text-center">TOTAL</th>
+                <th colspan="4" class="text-center">TOTAL</th>
                 <th class="text-right">
                     Rp{{ number_format($pemeriksaans->sum(function($item) {
                         $resep = json_decode($item->resep_obat, true) ?? [];

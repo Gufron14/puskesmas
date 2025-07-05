@@ -73,7 +73,7 @@
                             <td>
                                 @if ($pasien->status === 'menunggu')
                                     <span class="badge bg-warning text-white px-3 py-2">MENUNGGU</span>
-                                @elseif ($pasien->status === 'diperiksa')
+                                @elseif ($pasien->status === 'selesai')
                                     <span class="badge bg-success text-white px-3 py-2">DIPERIKSA</span>
                                 @else
                                     <span class="badge bg-secondary">-</span>
@@ -82,15 +82,15 @@
                             <td>
                                 {{-- <a type="button" class="btn  btn-primary"
                                     href="{{ route('pasien.edit', $pasien->id) }}"><i class="fe fe-edit fe-16"></i></a> --}}
-<form action="{{ route('antrian.destroy', $pasien->id) }}" method="POST" 
-      onsubmit="return confirm('Yakin ingin menghapus pasien {{ $pasien->user->name }} dari antrian?')" 
-      style="display: inline;">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="btn btn-danger btn-sm">
-        <i class="fe fe-trash"></i> Hapus
-    </button>
-</form>
+                                <form action="{{ route('antrian.destroy', $pasien->id) }}" method="POST"
+                                    onsubmit="return confirm('Yakin ingin menghapus pasien {{ $pasien->user->name }} dari antrian?')"
+                                    style="display: inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fe fe-trash"></i> Hapus
+                                    </button>
+                                </form>
                             </td>
                         </tr>
                     @endforeach
@@ -98,10 +98,10 @@
             </table>
         </div>
     </div>
-    
+
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
+
     <script>
         function deleteActivity(id) {
             event.preventDefault();
@@ -174,7 +174,7 @@
                         });
 
                         const result = await response.json();
-                        
+
                         if (!response.ok || !result.success) {
                             throw new Error(result.message || 'Terjadi kesalahan pada server');
                         }

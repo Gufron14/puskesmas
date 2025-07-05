@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::create([
-            'name' => 'Admin SIM RS',
+            'name' => 'Admin SIM RM',
             'telepon' => '08123456789',
             'password' => Hash::make('12345678'),
             'role' => 'Admin',
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         // Mantri -> Pemeriksaan, Rekam Medis
         User::create([
-            'name' => 'Mantri SIM RS',
+            'name' => 'Mantri SIM RM',
             'telepon' => '081234567890',
             'password' => Hash::make('12345678'),
             'role' => 'Mantri',

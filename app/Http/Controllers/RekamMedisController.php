@@ -285,14 +285,14 @@ class RekamMedisController extends Controller
 
     public function printPemeriksaan($id)
     {
-        $pemeriksaan = Pemeriksaan::with('user')->where('user_id', $id)->firstOrFail();
+        $pemeriksaan = Pemeriksaan::with('user')->where('id', $id)->firstOrFail();
 
         $pemeriksaan->resep_decoded = json_decode($pemeriksaan->resep_obat, true) ?? [];
         $pemeriksaan->total_obat = collect($pemeriksaan->resep_decoded)->sum(function ($r) {
             return ($r['jumlah'] ?? 0) * ($r['harga'] ?? 0);
         });
 
-        return view('backend.pages.print.rekamedis', compact('pemeriksaan'));
+        return view('backend.pages.print.pemeriksaan', compact('pemeriksaan'));
     }
 
     public function keuangan()

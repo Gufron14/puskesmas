@@ -155,9 +155,14 @@
                 <td>{{ $pemeriksaan->gejala }}</td>
             </tr>
             <tr>
+                <td>Suhu Tubuh</td>
+                <td>:</td>
+                <td>{{ $pemeriksaan->suhu }}&deg;C</td>
+            </tr>
+            <tr>
                 <td>Tensi</td>
                 <td>:</td>
-                <td>{{ $pemeriksaan->tensi_sistolik }} / {{ $pemeriksaan->tensi_diastolik }}</td>
+                <td>{{ $pemeriksaan->tensi_sistolik }} / {{ $pemeriksaan->tensi_diastolik }} mmHg</td>
             </tr>
             <tr>
                 <td>Catatan Dokter</td>
@@ -169,7 +174,7 @@
                 <td>:</td>
                 <td>
                     @forelse ($pemeriksaan->resep_decoded as $resep)
-                        {{ $resep['nama'] ?? '-' }} ({{ $resep['jumlah'] ?? 0 }} x
+                        {{ $resep['nama_obat'] ?? '-' }} ({{ $resep['jumlah'] ?? 0 }} x
                         Rp{{ number_format($resep['harga'] ?? 0) }}),
                     @empty
                         Tidak ada

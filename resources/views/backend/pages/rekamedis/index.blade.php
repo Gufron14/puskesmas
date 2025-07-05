@@ -37,11 +37,11 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Pasien</th>
-                        <th>Suhu</th>
-                        <th>Tensi</th>
+                            <th>Suhu</th>
+                            <th>Tensi</th>
                         <th>Resep Obat</th>
-                        <th>Tanggal</th>
                         <th>Total Bayar</th>
+                        <th>Tanggal</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -68,10 +68,10 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
+                            <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
                             <td>
                                 {{ \Carbon\Carbon::parse($item->waktu_pemeriksaan)->locale('id')->translatedFormat('l, d F Y, H:i') }}
                             </td>
-                            <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
                             <td>
                                 <div class="btn-group" role="group">
                                     <a href="{{ route('rekamedis.show', $item->id) }}" type="button"
@@ -87,10 +87,9 @@
                                             <i class="fe fe-printer"></i> Cetak
                                         </button>
                                         <div class="dropdown-menu">
-
-                                            <a class="dropdown-item" href="{{ url('/admin/rekamedis/print-pemeriksaan/' . $item->id) }}"
+                                            <a class="dropdown-item" href="{{ route('laporan.print', $item->id) }}"
                                                 target="_blank">🖨️ Cetak Langsung</a>
-                                            <a class="dropdown-item" href="{{ url('/pemeriksaan/exportPdf/' . $item->id) }}"
+                                            <a class="dropdown-item" href="{{ route('pemeriksaan.exportPdf', $item->id) }}"
                                                 target="_blank">📄 Download PDF</a>
                                         </div>
                                 </div>

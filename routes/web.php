@@ -61,7 +61,7 @@ Route::middleware(['auth', 'role:Admin,Mantri'])->group(function () {
     Route::get('/admin/rekamedis/print-laporan', [RekamMedisController::class, 'printLaporan'])->name('rekamedis.print');
 
     // Print routes
-    Route::get('/admin/rekamedis/print-pemeriksaan/{id}', [RekamMedisController::class, 'printPemeriksaan'])->name('pemeriksaan.print');
+
     Route::get('/pembayaran/print/{id}', [RekamMedisController::class, 'printInvoice'])->name('pembayaran.print');
     Route::get('/laporan/print-bulanan', [RekamMedisController::class, 'printLaporanBulanan'])->name('laporan.print');
 
@@ -73,7 +73,10 @@ Route::middleware(['auth', 'role:Admin,Mantri'])->group(function () {
     Route::put('/obat/{id}', [ObatController::class, 'update'])->name('obat.update');
     Route::delete('/obat/{id}', [ObatController::class, 'destroy'])->name('obat.destroy');
 });
-// Route::get('/pemeriksaan/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
+
+Route::get('/pemeriksaan/print/{id}', [RekamMedisController::class, 'printPemeriksaan'])->name('laporan.print');
+
+Route::get('/pemeriksaan/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
 
 Route::get('/saran-keluhan', [MasukanController::class, 'index'])->name('masukan');
 Route::get('/pelayanan', [PendaftaranController::class, 'index'])->name('daftar');

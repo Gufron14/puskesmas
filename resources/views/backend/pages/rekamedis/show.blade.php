@@ -120,7 +120,6 @@
         @endif
     </div>
 </div>
-
 <!-- Resep Obat Detail -->
 <div class="card border-left-danger mt-3">
     <div class="card-body">
