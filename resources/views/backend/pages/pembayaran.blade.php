@@ -8,18 +8,18 @@
         <div class="mb-4">
             <form method="GET" action="{{ route('pembayaran') }}">
                 <label for="pemeriksaan_id" class="font-weight-bold">Pilih Pasien Belum Bayar</label>
-<select name="id" id="pemeriksaan_id" class="form-control" onchange="this.form.submit()">
-    <option value="">-- Pilih Pasien --</option>
-    @foreach (\App\Models\Pemeriksaan::whereDoesntHave('pembayaran')->with('pasien.user')->orderByDesc('created_at')->get() as $periksa)
-        @php
-            $user = optional($periksa->pasien)->user;
-        @endphp
-        <option value="{{ $periksa->id }}" {{ request('id') == $periksa->id ? 'selected' : '' }}>
-            {{ $user->name ?? '-' }} - {{ $user->nik ?? '-' }}
-            ({{ \Carbon\Carbon::parse($periksa->waktu_pemeriksaan)->translatedFormat('d/m/Y H:i') }})
-        </option>
-    @endforeach
-</select>
+                <select name="id" id="pemeriksaan_id" class="form-control" onchange="this.form.submit()">
+                    <option value="">-- Pilih Pasien --</option>
+                    @foreach (\App\Models\Pemeriksaan::whereDoesntHave('pembayaran')->with('pasien.user')->orderByDesc('created_at')->get() as $periksa)
+                        @php
+                            $user = optional($periksa->pasien)->user;
+                        @endphp
+                        <option value="{{ $periksa->id }}" {{ request('id') == $periksa->id ? 'selected' : '' }}>
+                            {{ $user->name ?? '-' }} - {{ $user->nik ?? '-' }}
+                            ({{ \Carbon\Carbon::parse($periksa->waktu_pemeriksaan)->translatedFormat('d/m/Y H:i') }})
+                        </option>
+                    @endforeach
+                </select>
 
             </form>
         </div>
@@ -39,7 +39,7 @@
                     <h5 class="mb-3">Tebus Obat</h5>
                     @forelse ($resep as $item)
                         <div class="d-flex" style="gap: 10px">
-                            <h6>{{ $item['nama'] }}</h6>
+                            <h6>{{ $item['nama_obat'] }}</h6>
                             <h6>{{ $item['jumlah'] }}x</h6>
                             <h6>Rp {{ number_format($item['harga'], 0, ',', '.') }}</h6>
                         </div>

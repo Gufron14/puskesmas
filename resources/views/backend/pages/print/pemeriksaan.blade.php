@@ -113,7 +113,7 @@
                     <img src="{{ asset('backend/assets/logo/logo.png') }}" alt="Logo" width="60">
                 </td>
                 <td style="text-align: center;">
-                    <h1 style="margin: 0;">Formulir Rekam Medis Rawat Jalan</h1>
+                    <h1 style="margin: 0;">Hasil Rekam Medis</h1>
                     <h2 style="margin: 0;">Pustu (Puskesmas Pembantu)</h2>
                     <h3 style="margin: 0;">Desa Wakap</h3>
                     <p style="margin: 0; font-size: 12px;">

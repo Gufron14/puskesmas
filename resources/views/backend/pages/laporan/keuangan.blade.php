@@ -44,8 +44,10 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                <button type="button" class="btn btn-info text-white" onclick="cetakLangsung()">🖨️ Cetak Langsung</button>
-                                <button type="button" class="btn btn-success text-white" onclick="downloadPdf()">📄 Download PDF</button>
+                                <button type="button" class="btn btn-info text-white" onclick="cetakLangsung()">🖨️ Cetak
+                                    Langsung</button>
+                                <button type="button" class="btn btn-success text-white" onclick="downloadPdf()">📄
+                                    Download PDF</button>
                             </div>
                         </div>
                     </div>
@@ -55,7 +57,7 @@
                     function cetakLangsung() {
                         const bulan = document.getElementById('bulan').value;
                         const tahun = document.getElementById('tahun').value;
-                        
+
                         if (bulan && tahun) {
                             const url = `{{ route('laporan.print') }}?bulan=${bulan}&tahun=${tahun}`;
                             window.open(url, '_blank');
@@ -68,7 +70,7 @@
                     function downloadPdf() {
                         const bulan = document.getElementById('bulan').value;
                         const tahun = document.getElementById('tahun').value;
-                        
+
                         if (bulan && tahun) {
                             const url = `{{ route('laporan.bulanan') }}?bulan=${bulan}&tahun=${tahun}`;
                             window.open(url, '_blank');
@@ -82,49 +84,52 @@
             </div>
         </div>
         <div class="table-responsive">
-<table class="table datatables" id="dataTable-1">
-    <thead>
-        <tr>
-            <th>No</th>
-            <th>Nama Pasien</th>
-            <th>Tanggal</th>
-            <th>Harga Obat</th>
-            <th>Biaya Pemeriksaan</th>
-            <th>Total Harga</th>
-            <th>Metode Pembayaran</th>
-            <th>Jumlah Bayar</th>
-            <th>Kembalian</th>
-            <th>Aksi</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach ($pembayarans as $item)
-            <tr>
-                <td>{{ $loop->iteration }}</td>
-                <td>{{ $item->pemeriksaan->user->name ?? '-' }}</td>
-                <td>                                {{ \Carbon\Carbon::parse($item->waktu_pemeriksaan)->locale('id')->translatedFormat('l, d F Y, H:i') }}
-</td>
-                <td>Rp{{ number_format($item->total_obat, 0, ',', '.') }}</td>
-                <td>Rp{{ number_format($item->biaya_pemeriksaan, 0, ',', '.') }}</td>
-                <td>Rp{{ number_format($item->total_tagihan, 0, ',', '.') }}</td>
-                <td>{{ strtoupper($item->metode) }}</td>
-                <td>Rp{{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
-                <td>Rp{{ number_format($item->kembalian, 0, ',', '.') }}</td>
-                <td>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Cetak
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="{{ route('pembayaran.print', $item->id) }}" target="_blank">🖨️ Cetak Langsung</a>
-                            <a class="dropdown-item" href="{{ route('pembayaran.invoice', $item->id) }}" target="_blank">📄 Download PDF</a>
-                        </div>
-                    </div>
-                </td>
-            </tr>
-        @endforeach
-    </tbody>
-</table>
+            <table class="table datatables" id="dataTable-1">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Pasien</th>
+                        <th>Tanggal</th>
+                        <th>Harga Obat</th>
+                        <th>Biaya Pemeriksaan</th>
+                        <th>Total Harga</th>
+                        <th>Metode Pembayaran</th>
+                        <th>Jumlah Bayar</th>
+                        <th>Kembalian</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($pembayarans as $item)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $item->pemeriksaan->user->name ?? '-' }}</td>
+                            <td> {{ \Carbon\Carbon::parse($item->waktu_pemeriksaan)->locale('id')->translatedFormat('l, d F Y, H:i') }}
+                            </td>
+                            <td>Rp{{ number_format($item->total_obat, 0, ',', '.') }}</td>
+                            <td>Rp{{ number_format($item->biaya_pemeriksaan, 0, ',', '.') }}</td>
+                            <td>Rp{{ number_format($item->total_tagihan, 0, ',', '.') }}</td>
+                            <td>{{ strtoupper($item->metode) }}</td>
+                            <td>Rp{{ number_format($item->jumlah_bayar, 0, ',', '.') }}</td>
+                            <td>Rp{{ number_format($item->kembalian, 0, ',', '.') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown"
+                                        aria-haspopup="true" aria-expanded="false">
+                                        Cetak
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{{ route('pembayaran.print', $item->id) }}"
+                                            target="_blank">🖨️ Cetak Langsung</a>
+                                        <a class="dropdown-item" href="{{ route('pembayaran.invoice', $item->id) }}"
+                                            target="_blank">📄 Download PDF</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

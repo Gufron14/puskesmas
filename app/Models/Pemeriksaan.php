@@ -43,6 +43,12 @@ class Pemeriksaan extends Model
         return $this->belongsTo(Pasien::class, 'user_id', 'user_id');
     }
 
+    // Pembayaran
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class);
+    }
+
     // public function obats()
     // {
     //     return $this->belongsToMany(Obat::class, 'pemeriksaan_obat', 'pemeriksaan_id', 'obat_id');
