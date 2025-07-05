@@ -4,17 +4,21 @@
     <div class="container-fluid">
         <div class="row align-items-center justify-content-between mb-4">
             <div class="col">
-                <h4 class="font-weight-bold text-dark">Data Data Antrian</h4>
+                <h4 class="font-weight-bold text-dark">Data Antrian</h4>
             </div>
 
             <div class="col-auto">
-                @if ($antrian->status === 'on')
+                @if ($antrian && $antrian->status === 'on')
                     <a href="{{ route('antrian.create') }}" class="btn btn-success text-white font-weight-bold">
                         Tambah Data Antrian <i class="fe fe-plus fe-12"></i>
                     </a>
-                @else
+                @elseif ($antrian && $antrian->status === 'off')
                     <button type="button" onclick="showAntrianTutup()" class="btn btn-success text-white font-weight-bold">
                         Tambah Data Antrian <i class="fe fe-plus fe-12"></i>
+                    </button>
+                @else
+                    <button type="button" onclick="showBukaAntrian()" class="btn btn-warning text-white font-weight-bold">
+                        Buka Antrian <i class="fe fe-unlock fe-12"></i>
                     </button>
                 @endif
             </div>
@@ -78,13 +82,15 @@
                             <td>
                                 {{-- <a type="button" class="btn  btn-primary"
                                     href="{{ route('pasien.edit', $pasien->id) }}"><i class="fe fe-edit fe-16"></i></a> --}}
-                                <button class="btn btn-danger" onclick="deleteActivity({{ $pasien->id }})"><i
-                                        class="fe fe-trash fe-16"></i></button>
-                                <form id="Hapus{{ $pasien->id }}" action="{{ route('pasien.destroy', $pasien->id) }}"
-                                    method="POST" style="display: none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
+<form action="{{ route('antrian.destroy', $pasien->id) }}" method="POST" 
+      onsubmit="return confirm('Yakin ingin menghapus pasien {{ $pasien->user->name }} dari antrian?')" 
+      style="display: inline;">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="btn btn-danger btn-sm">
+        <i class="fe fe-trash"></i> Hapus
+    </button>
+</form>
                             </td>
                         </tr>
                     @endforeach
@@ -92,6 +98,10 @@
             </table>
         </div>
     </div>
+    
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
     <script>
         function deleteActivity(id) {
             event.preventDefault();
@@ -123,6 +133,72 @@
                 title: 'Antrian Ditutup',
                 text: 'Saat ini antrian sedang tutup. Silakan coba lagi nanti.',
                 confirmButtonText: 'OK'
+            });
+        }
+
+        function showBukaAntrian() {
+            Swal.fire({
+                title: 'Buka Antrian',
+                text: 'Antrian belum diatur. Silakan tentukan jumlah kuota antrian hari ini.',
+                input: 'number',
+                inputAttributes: {
+                    min: 1,
+                    max: 100,
+                    placeholder: 'Masukkan jumlah kuota (1-100)'
+                },
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'Kuota antrian harus diisi!';
+                    }
+                    if (value < 1 || value > 100) {
+                        return 'Kuota antrian harus antara 1-100!';
+                    }
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Buka Antrian',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#6c757d',
+                showLoaderOnConfirm: true,
+                preConfirm: async (kuota) => {
+                    try {
+                        const response = await fetch('{{ route('antrian.buka') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                jumlah: kuota
+                            })
+                        });
+
+                        const result = await response.json();
+                        
+                        if (!response.ok || !result.success) {
+                            throw new Error(result.message || 'Terjadi kesalahan pada server');
+                        }
+
+                        return result;
+                    } catch (error) {
+                        Swal.showValidationMessage(
+                            `Gagal membuka antrian: ${error.message}`
+                        );
+                    }
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: result.value.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        // Reload halaman untuk memperbarui status
+                        window.location.reload();
+                    });
+                }
             });
         }
     </script>

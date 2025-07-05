@@ -12,7 +12,7 @@ class PembayaranController extends Controller
     {
         // Cek apakah pemeriksaan_id ada
         if ($request->filled('id')) {
-            $pemeriksaan = Pemeriksaan::with('pasien')->find($request->id);
+            $pemeriksaan = Pemeriksaan::with('user')->find($request->id);
 
             // Jika tidak ditemukan di database, tetap lanjut dengan data kosong
             if ($pemeriksaan) {
@@ -34,6 +34,18 @@ class PembayaranController extends Controller
 
         return view('backend.pages.pembayaran', compact('pemeriksaan', 'resep', 'totalObat'));
     }
+
+    public function daftarBelumBayar()
+    {
+        // Ambil pemeriksaan yang belum ada pembayaran
+        $pemeriksaans = Pemeriksaan::whereDoesntHave('pembayaran')
+            ->with(['pasien.user'])
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('backend.pages.pembayaran_belum_bayar', compact('pemeriksaans'));
+    }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -65,5 +77,4 @@ class PembayaranController extends Controller
         $pembayaran->delete();
         return redirect()->back()->with('success', 'Data berhasil dihapus.');
     }
-
 }

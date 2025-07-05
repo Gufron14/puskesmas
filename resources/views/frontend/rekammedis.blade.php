@@ -58,10 +58,11 @@
                                         <td>{{ \Carbon\Carbon::parse($item->tanggal_pemeriksaan)->translatedFormat('l, d F Y, H:i') }}
                                         </td>
                                         <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
-                                        <td>
-                                            <a href="{{ route('pemeriksaan.exportPdf', $item->pasien_id) }}" target="_blank"
-                                                class="btn btn-success text-white">Cetak</a>
-                                        </td>
+{{-- filepath: c:\Users\GUFRON\Documents\Project Web\puskesmas\resources\views\frontend\rekammedis.blade.php --}}
+<td>
+    <a href="{{ route('pemeriksaan.exportPdf', $item->id) }}" target="_blank"
+        class="btn btn-success text-white">Cetak</a>
+</td>
                                     </tr>
                                 @endforeach
                             </tbody>

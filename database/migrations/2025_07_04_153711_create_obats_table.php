@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pasiens', function (Blueprint $table) {
+        Schema::create('obats', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('restrict');
-            $table->date('tanggal_antrian')->nullable();
-            $table->integer('nomor_antrian')->nullable();
-            $table->string('status')->default('menunggu');
+            $table->string('nama'); // Ubah dari nama_obat ke nama
+            $table->decimal('harga', 10, 2); // Ubah ke decimal untuk harga
+            $table->integer('stok')->default(0);
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+            $table->text('deskripsi')->nullable();
             $table->timestamps();
         });
     }
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pasiens');
+        Schema::dropIfExists('obats');
     }
 };

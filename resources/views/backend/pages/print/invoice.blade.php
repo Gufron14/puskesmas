@@ -69,10 +69,40 @@
         .text-right {
             text-align: right;
         }
+
+        .print-btn {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .print-btn button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .print-btn button:hover {
+            background-color: #0056b3;
+        }
+
+        @media print {
+            .print-btn {
+                display: none;
+            }
+        }
     </style>
 </head>
 
 <body>
+    <div class="print-btn">
+        <button onclick="window.print()">🖨️ Cetak</button>
+        <button onclick="window.close()" style="background-color: #6c757d; margin-left: 10px;">❌ Tutup</button>
+    </div>
+
     <div class="invoice-box">
         <h2>Invoice Pembayaran</h2>
 
@@ -118,6 +148,15 @@
             Terima kasih atas kunjungan Anda.
         </div>
     </div>
+
+    <script>
+        // Auto print ketika halaman dimuat
+        window.onload = function() {
+            setTimeout(function() {
+                window.print();
+            }, 500);
+        }
+    </script>
 </body>
 
 </html>

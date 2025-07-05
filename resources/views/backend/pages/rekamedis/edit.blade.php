@@ -4,213 +4,545 @@
     <div class="container-fluid">
         <h4 class="font-weight-bold mb-4">Edit Rekam Medis</h4>
 
-        <form action="{{ route('rekamedis.update', $pemeriksaan->id) }}" method="POST">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
+        @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Terjadi kesalahan:</strong>
+                <ul class="mb-0 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+
+        <form action="{{ route('rekamedis.update', $pemeriksaan->id) }}" method="POST" id="form-pemeriksaan">
             @csrf
             @method('PUT')
-            <div class="form-group mb-4">
-                <label for="simple-select2">Pilih Pasien</label>
-                <select class="form-control select2" name="pasien_id" id="simple-select2">
-                    <optgroup>
-                        @foreach ($pasiens as $pasien)
-                            <option value="{{ $pasien->id }}"
-                                {{ $pasien->id == $pemeriksaan->pasien_id ? 'selected' : '' }}>
-                                {{ $pasien->user->name }} - {{ $pasien->user->nik }}
-                            </option>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="user_id">Pasien <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" 
+                               value="{{ $pemeriksaan->user->name ?? '-' }} - {{ $pemeriksaan->user->nik ?? '-' }}" 
+                               readonly>
+                        <input type="hidden" name="user_id" value="{{ $pemeriksaan->user_id }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="waktu_pemeriksaan">Waktu Pemeriksaan <span class="text-danger">*</span></label>
+                        <input type="datetime-local" id="waktu_pemeriksaan" name="waktu_pemeriksaan" class="form-control"
+                            value="{{ old('waktu_pemeriksaan', $pemeriksaan->waktu_pemeriksaan ? \Carbon\Carbon::parse($pemeriksaan->waktu_pemeriksaan)->format('Y-m-d\TH:i') : '') }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" name="tanggal_pemeriksaan" value="{{ $pemeriksaan->tanggal_pemeriksaan ? \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->format('Y-m-d') : now()->toDateString() }}">
+
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="suhu" class="form-label">Suhu Tubuh (°C) <span class="text-danger">*</span></label>
+                    <input type="number" name="suhu" class="form-control" id="suhu" min="30" max="45"
+                        step="0.1" placeholder="36.5" required value="{{ old('suhu', $pemeriksaan->suhu) }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="tensi_darah" class="form-label">Tensi Darah <span class="text-danger">*</span></label>
+                    <div class="d-flex align-items-center" style="gap: 5px;">
+                        <input type="number" id="sistolik" name="sistolik" class="form-control" min="50"
+                            max="300" placeholder="Sistolik" required value="{{ old('sistolik', $pemeriksaan->tensi_sistolik) }}">
+                        <span>/</span>
+                        <input type="number" id="diastolik" name="diastolik" class="form-control" min="30"
+                            max="200" placeholder="Diastolik" required value="{{ old('diastolik', $pemeriksaan->tensi_diastolik) }}">
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <label for="biaya" class="form-label">Biaya Pemeriksaan <span class="text-danger">*</span></label>
+                    <input type="number" name="biaya" class="form-control" id="biaya" min="0"
+                        placeholder="50000" required value="{{ old('biaya', (int) $pemeriksaan->biaya) }}">
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="form-group mb-4">
+                        <label for="gejala">Gejala Awal</label>
+                        <textarea name="gejala" id="gejala" cols="30" rows="3" class="form-control" maxlength="1000"
+                            placeholder="Masukkan gejala yang dialami pasien">{{ old('gejala', $pemeriksaan->gejala) }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="diagnosa">Diagnosa Sementara</label>
+                        <textarea name="diagnosa" id="diagnosa" cols="30" rows="4" class="form-control" maxlength="2000"
+                            placeholder="Masukkan diagnosa">{{ old('diagnosa', $pemeriksaan->diagnosa) }}</textarea>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-4">
+                        <label for="catatan_dokter">Catatan Dokter</label>
+                        <textarea name="catatan_dokter" id="catatan_dokter" cols="30" rows="4" class="form-control"
+                            maxlength="2000" placeholder="Masukkan catatan dokter">{{ old('catatan_dokter', $pemeriksaan->catatan_dokter) }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resep Obat Section -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h5 class="mb-0">Resep Obat <span class="text-danger">*</span></h5>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" id="btn-tambah-obat" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus"></i> Tambah Obat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="resep-container">
+                        @php
+                            $oldResep = old('resep', $resepObat ?: [
+                                ['nama_obat' => '', 'jenis_obat' => '', 'keterangan_makan' => '', 'jumlah' => 1],
+                            ]);
+                        @endphp
+
+                        @foreach ($oldResep as $index => $resep)
+                            <div class="resep-item mb-3" data-index="{{ $index }}">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label>Nama Obat <span class="text-danger">*</span></label>
+                                        <select name="resep[{{ $index }}][nama_obat]" class="form-control" required>
+                                            <option value="">-- Pilih Obat --</option>
+                                            @foreach ($obats as $obat)
+                                                <option value="{{ $obat->id }}" data-harga="{{ $obat->harga }}"
+                                                    data-stok="{{ $obat->stok }}"
+                                                    {{ ($resep['obat_id'] ?? '') == $obat->id ? 'selected' : '' }}>
+                                                    {{ $obat->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Jenis Obat <span class="text-danger">*</span></label>
+                                        <select name="resep[{{ $index }}][jenis_obat]" class="form-control" required>
+                                            <option value="">-- Pilih Jenis --</option>
+                                            @foreach ($jenisObats as $jenis)
+                                                <option value="{{ $jenis->id }}"
+                                                    {{ ($resep['jenis_obat_id'] ?? '') == $jenis->id ? 'selected' : '' }}>
+                                                    {{ $jenis->jenis_obat }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Harga Satuan</label>
+                                        <input type="text" class="form-control harga-obat" readonly
+                                            value="@if (isset($resep['harga']) && $resep['harga']) {{ 'Rp' . number_format($resep['harga'], 0, ',', '.') }} @endif"
+                                            placeholder="Pilih obat dulu">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Keterangan Makan <span class="text-danger">*</span></label>
+                                        <select name="resep[{{ $index }}][keterangan_makan]" class="form-control" required>
+                                            <option value="">-- Pilih --</option>
+                                            <option value="sebelum_makan"
+                                                {{ ($resep['keterangan_makan'] ?? '') == 'sebelum_makan' ? 'selected' : '' }}>
+                                                Sebelum Makan</option>
+                                            <option value="sesudah_makan"
+                                                {{ ($resep['keterangan_makan'] ?? '') == 'sesudah_makan' ? 'selected' : '' }}>
+                                                Sesudah Makan</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label>Jumlah <span class="text-danger">*</span></label>
+                                        <input type="number" name="resep[{{ $index }}][jumlah]"
+                                            class="form-control" min="1" value="{{ $resep['jumlah'] ?? 1 }}" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Subtotal</label>
+                                        <input type="text" class="form-control subtotal-obat" readonly
+                                            value="@if (isset($resep['subtotal']) && $resep['subtotal']) {{ 'Rp' . number_format($resep['subtotal'], 0, ',', '.') }} @endif"
+                                            placeholder="Rp 0">
+                                        <small class="text-info stok-info">
+                                            @if (isset($resep['obat_id']) && $resep['obat_id'])
+                                                @php
+                                                    $obatStok = $obats->find($resep['obat_id']);
+                                                @endphp
+                                                @if($obatStok)
+                                                    Stok: {{ $obatStok->stok }}
+                                                @endif
+                                            @endif
+                                        </small>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <label>&nbsp;</label>
+                                        @if ($index > 0)
+                                            <button type="button" class="btn btn-danger btn-sm btn-remove-resep d-block">
+                                                Hapus
+                                            </button>
+                                        @else
+                                            <div class="btn btn-sm d-block" style="visibility: hidden;">
+                                                Hapus
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
                         @endforeach
-                    </optgroup>
-                </select>
-            </div>
-
-            <div class="form-group mb-4">
-                <label class="font-weight-bold" for="tanggal_pemeriksaan">Tanggal Pemeriksaan</label>
-                <input type="text" id="tanggal_pemeriksaan" name="tanggal_pemeriksaan" class="form-control" value="{{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->format('Y-m-d') }}" placeholder="Pilih tanggal pemeriksaan" autocomplete="off" required readonly>
-            </div>
-
-            <div class="mb-3">
-                <label for="tensi_darah" class="form-label">Tensi Darah</label>
-                <div class="d-flex align-items-center" style="gap: 5px;">
-                    <input type="number" id="sistolik" name="sistolik" class="form-control" min="1"
-                        style="width: 80px;" maxlength="3" placeholder="" pattern="\d{2,3}" required
-                        value="{{ $pemeriksaan->tensi_sistolik }}">
-                    <span>/</span>
-                    <input type="number" id="diastolik" name="diastolik" class="form-control" min="1"
-                        style="width: 80px;" maxlength="3" placeholder="" pattern="\d{2,3}" required
-                        value="{{ $pemeriksaan->tensi_diastolik }}">
-                </div>
-            </div>
-
-            <div class="form-group mb-4">
-                <label class="font-weight-bold" for="gejala">Gejala Awal</label>
-                <textarea name="gejala" id="gejala" cols="30" rows="4" class="form-control">{{ $pemeriksaan->gejala }}</textarea>
-            </div>
-
-            <div class="form-group mb-4">
-                <label class="font-weight-bold" for="catatan_dokter">Catatan Dokter</label>
-                <textarea name="catatan_dokter" id="catatan_dokter" cols="30" rows="6" class="form-control">{{ $pemeriksaan->catatan_dokter }}</textarea>
-            </div>
-
-            <div class="form-group mb-4">
-                <div class="row align-items-center mb-3">
-                    <div class="col">
-                        <label class="font-weight-bold">Resep Obat</label>
                     </div>
-                    <div class="col-auto">
-                        <button type="button" id="tambah-obat" class="btn btn-sm btn-primary mt-2">+ Tambah Obat</button>
-                    </div>
-                </div>
 
-                <div id="resep-obat-wrapper">
-                    <!-- Awal item resep, sesuaikan dengan data resep pemeriksaan -->
-                    @foreach ($resepObat as $index => $item)
-                        <div class="row mb-2 resep-item align-items-center">
-                            <div class="col-md-4">
-                                <input type="text" name="resep[{{ $index }}][nama]" class="form-control"
-                                    placeholder="Nama Obat" required value="{{ $item['nama'] ?? '' }}">
-                            </div>
-                            <div class="col-md-3">
-                                <input type="number" name="resep[{{ $index }}][jumlah]" class="form-control"
-                                    placeholder="Jumlah" required value="{{ $item['jumlah'] ?? '' }}">
-                            </div>
-                            <div class="col-md-4">
-                                <input type="text" name="resep[{{ $index }}][harga_display]"
-                                    class="form-control harga-display" placeholder="Harga (Rp)" required
-                                    data-index="{{ $index }}"
-                                    value="{{ number_format($item['harga'] ?? 0, 0, ',', '.') }}">
-                                <input type="hidden" name="resep[{{ $index }}][harga]" class="harga"
-                                    data-index="{{ $index }}" value="{{ $item['harga'] ?? '' }}" />
-                            </div>
-                            <div class="col-md-1">
-                                <button type="button" class="btn btn-danger btn-sm remove-item">Hapus</button>
+                    <div class="col-md-4 text-right">
+                        <div class="card bg-light">
+                            <div class="card-body py-2 total-biaya-card">
+                                @php
+                                    $totalObat = 0;
+                                    foreach ($oldResep as $resep) {
+                                        if (isset($resep['subtotal']) && $resep['subtotal']) {
+                                            $totalObat += $resep['subtotal'];
+                                        } elseif (isset($resep['jumlah']) && isset($resep['harga'])) {
+                                            $totalObat += $resep['jumlah'] * $resep['harga'];
+                                        }
+                                    }
+                                    $biayaPemeriksaan = old('biaya', $pemeriksaan->biaya);
+                                    $totalBiaya = $totalObat + $biayaPemeriksaan;
+                                @endphp
+                                <strong>Total Obat: Rp{{ number_format($totalObat, 0, ',', '.') }}</strong><br>
+                                <strong>Biaya Pemeriksaan: Rp{{ number_format($biayaPemeriksaan, 0, ',', '.') }}</strong><br>
+                                <strong class="text-primary">Total Keseluruhan: Rp{{ number_format($totalBiaya, 0, ',', '.') }}</strong>
                             </div>
                         </div>
-                    @endforeach
+                    </div>
                 </div>
             </div>
 
-            <div class="form-group mb-4">
-                <label class="font-weight-bold" for="biaya">Biaya Pemeriksaan</label>
-                <input type="text" data-type="rupiah" id="biaya_display" class="form-control"
-                    placeholder="Masukan biaya obat" value="{{ $pemeriksaan->biaya }}">
-                <input type="hidden" name="biaya" id="biaya" value="{{ $pemeriksaan->biaya }}" />
-            </div>
-
-            <div class="form-group float-right">
-                <button class="btn btn-primary" type="submit">Simpan</button>
+            <div class="form-group text-right">
+                <button type="button" class="btn btn-secondary mr-2" onclick="window.history.back()">Batal</button>
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-save"></i> Update Pemeriksaan
+                </button>
             </div>
         </form>
-
     </div>
+
+    <!-- JavaScript yang sama dengan pemeriksaan.blade.php -->
     <script>
-        // Fungsi format Rupiah (satu-satunya)
-        function formatRupiah(angka, prefix = '') {
-            let number_string = angka.replace(/[^,\d]/g, '').toString(),
-                split = number_string.split(','),
-                sisa = split[0].length % 3,
-                rupiah = split[0].substr(0, sisa),
-                ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+        document.addEventListener('DOMContentLoaded', function() {
+            let resepIndex = {{ count($oldResep) }};
 
-            if (ribuan) {
-                let separator = sisa ? '.' : '';
-                rupiah += separator + ribuan.join('.');
+            // Data obat dan jenis obat untuk perhitungan
+            const obatData = @json($obats->keyBy('id'));
+            const jenisObatData = @json($jenisObats->keyBy('id'));
+
+            // Format number untuk display
+            function formatRupiah(number) {
+                return 'Rp' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
 
-            rupiah = split[1] !== undefined ? rupiah + ',' + split[1] : rupiah;
-            return prefix + rupiah;
-        }
-
-        // Update tombol remove (hide jika cuma 1 item)
-        function updateRemoveButtons() {
-            const items = document.querySelectorAll('.resep-item');
-            const removeButtons = document.querySelectorAll('.remove-item');
-            if (items.length <= 1) {
-                removeButtons.forEach(btn => btn.style.display = 'none');
-            } else {
-                removeButtons.forEach(btn => btn.style.display = 'inline-block');
+            // Parse number dari string
+            function parseNumber(str) {
+                return parseInt(str.toString().replace(/[^0-9]/g, '')) || 0;
             }
-        }
 
-        // Bind event input format harga display dan update input hidden
-        function bindHargaListener(input) {
-            input.addEventListener('input', function() {
-                let idx = this.dataset.index;
-                this.value = formatRupiah(this.value);
+            // Update total biaya keseluruhan
+            function updateTotalBiaya() {
+                let totalObat = 0;
+                const biayaPemeriksaan = parseNumber(document.getElementById('biaya').value);
 
-                const angka = this.value.replace(/[^0-9]/g, '');
-                const hiddenInput = document.querySelector('.harga[data-index="' + idx + '"]');
-                if (hiddenInput) {
-                    hiddenInput.value = angka;
+                // Hitung total obat dari semua subtotal
+                document.querySelectorAll('.subtotal-obat').forEach(function(subtotalInput) {
+                    if (subtotalInput.value) {
+                        const subtotal = parseNumber(subtotalInput.value);
+                        totalObat += subtotal;
+                    }
+                });
+
+                const totalKeseluruhan = totalObat + biayaPemeriksaan;
+
+                // Update tampilan total
+                const totalCard = document.querySelector('.total-biaya-card');
+                if (totalCard) {
+                    totalCard.innerHTML = `
+            <strong>Total Obat: ${formatRupiah(totalObat)}</strong><br>
+            <strong>Biaya Pemeriksaan: ${formatRupiah(biayaPemeriksaan)}</strong><br>
+            <strong class="text-primary">Total Keseluruhan: ${formatRupiah(totalKeseluruhan)}</strong>
+        `;
+                }
+            }
+
+            // Event listener untuk perubahan select obat
+            document.addEventListener('change', function(e) {
+                if (e.target.matches('select[name*="nama_obat"]')) {
+                    const resepItem = e.target.closest('.resep-item');
+                    const selectedOption = e.target.options[e.target.selectedIndex];
+                    const hargaInput = resepItem.querySelector('.harga-obat');
+                    const subtotalInput = resepItem.querySelector('.subtotal-obat');
+                    const jumlahInput = resepItem.querySelector('input[name*="jumlah"]');
+                    const stokInfo = resepItem.querySelector('.stok-info');
+
+                    if (selectedOption.value) {
+                        const harga = parseInt(selectedOption.dataset.harga) || 0;
+                        const stok = parseInt(selectedOption.dataset.stok) || 0;
+                        const jumlah = parseInt(jumlahInput.value) || 1;
+                        const subtotal = harga * jumlah;
+
+                        // Update harga
+                        hargaInput.value = formatRupiah(harga);
+
+                        // Update subtotal
+                        subtotalInput.value = formatRupiah(subtotal);
+
+                        // Update info stok
+                        stokInfo.textContent = `Stok: ${stok}`;
+
+                        // Set max jumlah sesuai stok
+                        jumlahInput.setAttribute('max', stok);
+
+                        // Validasi jika jumlah melebihi stok
+                        if (jumlah > stok) {
+                            jumlahInput.value = stok;
+                            subtotalInput.value = formatRupiah(harga * stok);
+                        }
+                    } else {
+                        hargaInput.value = '';
+                        subtotalInput.value = '';
+                        stokInfo.textContent = '';
+                        jumlahInput.removeAttribute('max');
+                    }
+
+                    updateTotalBiaya();
                 }
             });
-        }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set index awal berdasarkan jumlah resep yang sudah ada
-            let index = document.querySelectorAll('.resep-item').length;
+            // Event listener untuk perubahan jumlah
+            document.addEventListener('input', function(e) {
+                if (e.target.matches('input[name*="jumlah"]')) {
+                    const resepItem = e.target.closest('.resep-item');
+                    const selectObat = resepItem.querySelector('select[name*="nama_obat"]');
+                    const subtotalInput = resepItem.querySelector('.subtotal-obat');
+                    const jumlah = parseInt(e.target.value) || 0;
 
-            // Bind semua input harga-display yang sudah ada
-            document.querySelectorAll('.harga-display').forEach(bindHargaListener);
+                    if (selectObat.value) {
+                        const selectedOption = selectObat.options[selectObat.selectedIndex];
+                        const harga = parseInt(selectedOption.dataset.harga) || 0;
+                        const stok = parseInt(selectedOption.dataset.stok) || 0;
+                        const subtotal = harga * jumlah;
 
-            // Event tombol tambah obat
-            document.getElementById('tambah-obat').addEventListener('click', function() {
-                const wrapper = document.getElementById('resep-obat-wrapper');
-                const html = `
-            <div class="row mb-2 resep-item align-items-center">
-                <div class="col-md-4">
-                    <input type="text" name="resep[${index}][nama]" class="form-control" placeholder="Nama Obat" required>
+                        // Update subtotal
+                        subtotalInput.value = formatRupiah(subtotal);
+
+                        // Validasi stok
+                        if (jumlah > stok) {
+                            e.target.value = stok;
+                            subtotalInput.value = formatRupiah(harga * stok);
+                            alert(`Jumlah tidak boleh melebihi stok yang tersedia (${stok})`);
+                        }
+                    }
+
+                    updateTotalBiaya();
+                }
+            });
+
+            // Event listener untuk perubahan biaya pemeriksaan
+            document.getElementById('biaya').addEventListener('input', function() {
+                updateTotalBiaya();
+            });
+
+            // Tambah resep obat baru
+            document.getElementById('btn-tambah-obat').addEventListener('click', function() {
+                let optionsHtml = '<option value="">-- Pilih Obat --</option>';
+                Object.values(obatData).forEach(obat => {
+                    optionsHtml += `<option value="${obat.id}" data-harga="${obat.harga}" data-stok="${obat.stok}">${obat.nama}</option>`;
+                });
+
+                let jenisOptionsHtml = '<option value="">-- Pilih Jenis --</option>';
+                Object.values(jenisObatData).forEach(jenis => {
+                    jenisOptionsHtml += `<option value="${jenis.id}">${jenis.jenis_obat}</option>`;
+                });
+
+                const newResepHtml = `
+        <div class="resep-item mb-3" data-index="${resepIndex}">
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Nama Obat <span class="text-danger">*</span></label>
+                    <select name="resep[${resepIndex}][nama_obat]" class="form-control" required>
+                        ${optionsHtml}
+                    </select>
                 </div>
-                <div class="col-md-3">
-                    <input type="number" name="resep[${index}][jumlah]" class="form-control" placeholder="Jumlah" required>
+                <div class="col-md-2">
+                    <label>Jenis Obat <span class="text-danger">*</span></label>
+                    <select name="resep[${resepIndex}][jenis_obat]" class="form-control" required>
+                        ${jenisOptionsHtml}
+                    </select>
                 </div>
-                <div class="col-md-4">
-                    <input type="text" name="resep[${index}][harga_display]" class="form-control harga-display" placeholder="Harga (Rp)" required data-index="${index}">
-                    <input type="hidden" name="resep[${index}][harga]" class="harga" data-index="${index}" />
+                <div class="col-md-2">
+                    <label>Harga Satuan</label>
+                    <input type="text" class="form-control harga-obat" readonly placeholder="Pilih obat dulu">
+                </div>
+                <div class="col-md-2">
+                    <label>Keterangan Makan <span class="text-danger">*</span></label>
+                    <select name="resep[${resepIndex}][keterangan_makan]" class="form-control" required>
+                        <option value="">-- Pilih --</option>
+                        <option value="sebelum_makan">Sebelum Makan</option>
+                        <option value="sesudah_makan">Sesudah Makan</option>
+                    </select>
                 </div>
                 <div class="col-md-1">
-                    <button type="button" class="btn btn-danger btn-sm remove-item">Hapus</button>
+                    <label>Jumlah <span class="text-danger">*</span></label>
+                    <input type="number" name="resep[${resepIndex}][jumlah]" class="form-control" 
+                           min="1" value="1" required>
                 </div>
-            </div>`;
-                wrapper.insertAdjacentHTML('beforeend', html);
+                <div class="col-md-2">
+                    <label>Subtotal</label>
+                    <input type="text" class="form-control subtotal-obat" readonly placeholder="Rp 0">
+                    <small class="text-info stok-info"></small>
+                </div>
+                <div class="col-md-1">
+                    <label>&nbsp;</label>
+                    <button type="button" class="btn btn-danger btn-sm btn-remove-resep d-block">
+                        Hapus
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
 
-                // Bind listener pada input harga-display baru
-                const newInput = wrapper.querySelector(`.harga-display[data-index="${index}"]`);
-                if (newInput) {
-                    bindHargaListener(newInput);
-                }
-
-                index++;
-                updateRemoveButtons();
+                document.getElementById('resep-container').insertAdjacentHTML('beforeend', newResepHtml);
+                resepIndex++;
+                updateTotalBiaya();
             });
 
-            // Event tombol hapus item resep (event delegation)
+            // Hapus resep obat
             document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-item')) {
-                    e.target.closest('.resep-item').remove();
-                    updateRemoveButtons();
+                if (e.target.classList.contains('btn-remove-resep') || e.target.closest('.btn-remove-resep')) {
+                    const button = e.target.classList.contains('btn-remove-resep') ? e.target : e.target.closest('.btn-remove-resep');
+                    const resepItem = button.closest('.resep-item');
+                    const resepItems = document.querySelectorAll('.resep-item');
+
+                    if (resepItems.length > 1) {
+                        resepItem.remove();
+                        updateTotalBiaya();
+                    } else {
+                        alert('Minimal harus ada satu resep obat');
+                    }
                 }
             });
 
-            updateRemoveButtons();
+            // Validasi form sebelum submit
+            document.getElementById('form-pemeriksaan').addEventListener('submit', function(e) {
+                const resepItems = document.querySelectorAll('.resep-item');
+                let isValid = true;
+                let errorMessages = [];
+
+                // Validasi setiap resep
+                resepItems.forEach(function(item, index) {
+                    const selectObat = item.querySelector('select[name*="nama_obat"]');
+                    const selectJenis = item.querySelector('select[name*="jenis_obat"]');
+                    const selectKeterangan = item.querySelector('select[name*="keterangan_makan"]');
+                    const inputJumlah = item.querySelector('input[name*="jumlah"]');
+
+                    if (!selectObat.value) {
+                        isValid = false;
+                        errorMessages.push(`Resep ${index + 1}: Nama obat harus dipilih`);
+                    }
+
+                    if (!selectJenis.value) {
+                        isValid = false;
+                        errorMessages.push(`Resep ${index + 1}: Jenis obat harus dipilih`);
+                    }
+
+                    if (!selectKeterangan.value) {
+                        isValid = false;
+                        errorMessages.push(`Resep ${index + 1}: Keterangan makan harus dipilih`);
+                    }
+
+                    if (!inputJumlah.value || parseInt(inputJumlah.value) < 1) {
+                        isValid = false;
+                        errorMessages.push(`Resep ${index + 1}: Jumlah obat harus diisi minimal 1`);
+                    }
+
+                    // Validasi stok
+                    if (selectObat.value && obatData[selectObat.value]) {
+                        const stok = parseInt(obatData[selectObat.value].stok) || 0;
+                        const jumlah = parseInt(inputJumlah.value) || 0;
+                        if (jumlah > stok) {
+                            isValid = false;
+                            errorMessages.push(`Resep ${index + 1}: Jumlah obat melebihi stok yang tersedia (${stok})`);
+                        }
+                    }
+                });
+
+                // Validasi biaya pemeriksaan
+                const biayaPemeriksaan = parseNumber(document.getElementById('biaya').value);
+                if (biayaPemeriksaan <= 0) {
+                    isValid = false;
+                    errorMessages.push('Biaya pemeriksaan harus diisi');
+                }
+
+                if (!isValid) {
+                    e.preventDefault();
+                    alert('Terdapat kesalahan:\n\n' + errorMessages.join('\n'));
+                    return false;
+                }
+
+                // Konfirmasi sebelum submit
+                if (!confirm('Apakah Anda yakin ingin mengupdate pemeriksaan ini?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+
+            // Initial calculation
+            updateTotalBiaya();
         });
     </script>
-@endsection
 
-@push('scripts')
-<!-- jQuery (CDN) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- Datepicker CSS (CDN) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
-<!-- Datepicker JS (CDN) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#tanggal_pemeriksaan').datepicker({
-            format: 'yyyy-mm-dd',
-            autoclose: true,
-            todayHighlight: true,
-            startDate: new Date()
-        }).on('focus click', function () {
-            $(this).datepicker('show');
-        });
-    });
-</script>
-@endpush
+    <style>
+        .resep-item {
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f8f9fa;
+        }
+
+        .resep-item:hover {
+            background-color: #e9ecef;
+        }
+
+        .text-danger {
+            color: #dc3545 !important;
+        }
+
+        .alert-info {
+            background-color: #d1ecf1;
+            border-color: #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+@endsection

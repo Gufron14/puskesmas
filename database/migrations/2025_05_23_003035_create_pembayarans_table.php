@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pembayarans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('pemeriksaan_id')->constrained()->onDelete('cascade');
+            $table->foreignId('pemeriksaan_id')->nullable()->constrained('pemeriksaans')->nullOnDelete();
             $table->string('metode');
             $table->decimal('biaya_pemeriksaan', 10, 2)->default(0);
             $table->decimal('total_obat', 10, 2)->default(0);

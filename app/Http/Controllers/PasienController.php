@@ -29,9 +29,7 @@ class PasienController extends Controller
         $tanggal = now()->toDateString();
 
         // Ambil nomor antrian yang sudah terpakai hari ini
-        $antrian_terpakai = Pasien::where('tanggal_antrian', $tanggal)
-            ->pluck('nomor_antrian')
-            ->toArray();
+        $antrian_terpakai = Pasien::where('tanggal_antrian', $tanggal)->pluck('nomor_antrian')->toArray();
 
         // Hindari range invalid jika kuota 0
         $semua_nomor = $kuota_harian > 0 ? range(1, $kuota_harian) : [];
@@ -43,16 +41,23 @@ class PasienController extends Controller
         $nomorWaktu = [];
         foreach ($nomor_tersedia as $no) {
             $nomorWaktu[] = [
-                'nomor' => $no
+                'nomor' => $no,
             ];
         }
 
         $sisaAntrian = count($nomor_tersedia);
 
-        $pasiens = User::where('role', 'User')->orderBy('created_at', 'DESC')->get();
+        // Menggunakan whereDoesntHave untuk filter user yang belum ada dalam antrian hari ini
+        $pasiens = User::where('role', 'User')
+            ->whereDoesntHave('pasiens', function ($query) use ($tanggal) {
+                $query->where('tanggal_antrian', $tanggal);
+            })
+            ->orderBy('created_at', 'DESC')
+            ->get();
 
         return view('backend.pages.antri.create', compact('nomorWaktu', 'sisaAntrian', 'pasiens'));
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -69,27 +74,23 @@ class PasienController extends Controller
                 'integer',
                 'between:1,' . $kuota_harian,
                 function ($attribute, $value, $fail) use ($tanggal) {
-                    $exists = Pasien::where('tanggal_antrian', $tanggal)
-                                    ->where('nomor_antrian', $value)
-                                    ->exists();
+                    $exists = Pasien::where('tanggal_antrian', $tanggal)->where('nomor_antrian', $value)->exists();
                     if ($exists) {
                         $fail("Nomor antrian $value sudah digunakan hari ini.");
                     }
-                }
+                },
             ],
         ]);
 
         // Simpan data pasien dengan nomor antrian & tanggal
         Pasien::create([
-            'user_id'         => $request->user_id,
-            'nomor_antrian'   => $request->nomor_antrian,
+            'user_id' => $request->user_id,
+            'nomor_antrian' => $request->nomor_antrian,
             'tanggal_antrian' => $tanggal,
         ]);
 
         return redirect()->route('antrian.index')->with('success', 'Pasien berhasil didaftarkan ke antrian.');
     }
-
-
 
     /**
      * Display the specified resource.
@@ -113,12 +114,12 @@ class PasienController extends Controller
     public function update(Request $request, Pasien $pasien)
     {
         $request->validate([
-            'nama_pasien'   => 'required|string|max:255',
+            'nama_pasien' => 'required|string|max:255',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-            'usia'          => 'required|integer|min:0',
-            'nik'           => 'required|digits:16',
-            'alamat'        => 'nullable|string',
-            'telepon'       => 'nullable|string|max:20',
+            'usia' => 'required|integer|min:0',
+            'nik' => 'required|digits:16',
+            'alamat' => 'nullable|string',
+            'telepon' => 'nullable|string|max:20',
         ]);
 
         $pasien->update($request->all());
@@ -129,9 +130,25 @@ class PasienController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Pasien $pasien)
+    public function destroy($id)
     {
-        $pasien->delete();
-        return redirect()->route('pasien.index')->with('success', 'Data pasien berhasil dihapus.');
+        try {
+            // ✅ BENAR - Hapus Pasien, bukan User
+            $pasien = Pasien::findOrFail($id);
+            
+            // Cek apakah pasien memiliki data pemeriksaan terkait
+            // if ($pasien->pemeriksaans()->exists()) {
+            //     return back()->with('error', 'Tidak dapat menghapus pasien karena sudah memiliki data pemeriksaan.');
+            // }
+            
+            $userName = $pasien->user->name;
+            $pasien->delete();
+            
+            return back()->with('success', "Data pasien {$userName} berhasil dihapus dari antrian.");
+            
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal menghapus data pasien: ' . $e->getMessage());
+        }
     }
+
 }

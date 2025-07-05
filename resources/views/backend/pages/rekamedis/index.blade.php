@@ -9,10 +9,8 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Pasien</th>
-                        <th>NIK</th>
-                        <th>Keluhan</th>
+                        <th>Suhu</th>
                         <th>Tensi</th>
-                        <th>Hasil</th>
                         <th>Resep Obat</th>
                         <th>Tanggal</th>
                         <th>Total Bayar</th>
@@ -29,39 +27,52 @@
                         @endphp
                         <tr>
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $item->pasien->user->name ?? '-' }}</td>
-                            <td>{{ $item->pasien->user->nik ?? '-' }}</td>
-                            <td>{{ $item->gejala }}</td>
-                            <td>{{ $item->tensi_sistolik }} / {{ $item->tensi_diastolik }}</td>
-                            <td>{{ $item->catatan_dokter }}</td>
+                            <td>{{ $item->user->name ?? '-' }}</td>
+                            <td>{{ $item->suhu }}&deg;C</td>
+                            <td>{{ $item->tensi_sistolik }} / {{ $item->tensi_diastolik }} mmHg</td>
                             <td>
-                                @if (count($resep))
-                                    <ul class="mb-0 pl-3">
-                                        @foreach ($resep as $r)
-                                            <li>{{ $r['nama'] ?? '-' }} : Rp{{ number_format($r['harga']) ?? 0 }}</li>
-                                        @endforeach
-                                    </ul>
+                                @if (count($item->resep_formatted))
+                                    @foreach ($item->resep_formatted as $r)
+                                        <span
+                                            class="badge badge-primary mr-1 mb-1">{{ $r['nama_obat'] ?? ($r['nama'] ?? '-') }}</span>
+                                    @endforeach
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
-                            <td>{{ \Carbon\Carbon::parse($item->tanggal_pemeriksaan)->translatedFormat('l, d F Y, H:i') }}
+                            <td>
+                                {{ \Carbon\Carbon::parse($item->waktu_pemeriksaan)->locale('id')->translatedFormat('l, d F Y, H:i') }}
                             </td>
                             <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
                             <td>
-
+                                <div class="btn-group" role="group">
+                                <a href="{{ route('rekamedis.show', $item->id) }}" type="button" class="btn btn-info btn-sm">
+                                    <i class="fe fe-eye"></i> Detail
+                                </>
                                 <a href="{{ route('rekamedis.edit', $item->id) }}"
-                                    class="btn btn-primary text-white">Edit</a>
-                                <a href="{{ route('pemeriksaan.exportPdf', $item->pasien_id) }}" target="_blank"
-                                    class="btn btn-success text-white">Cetak</a>
+                                    class="btn btn-primary btn-sm text-white">
+                                    <i class="fe fe-edit"></i> Edit
+                                </a>
+                                    <button type="button" class="btn btn-success btn-sm dropdown-toggle"
+                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        <i class="fe fe-printer"></i> Cetak
+                                    </button>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{{ route('pemeriksaan.print', $item->id) }}"
+                                            target="_blank">🖨️ Cetak Langsung</a>
+                                        <a class="dropdown-item" href="{{ route('pemeriksaan.exportPdf', $item->id) }}"
+                                            target="_blank">📄 Download PDF</a>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
+
                     @endforeach
                 </tbody>
             </table>
-
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     @if (session('success'))
@@ -74,6 +85,7 @@
             });
         </script>
     @endif
+
     <script>
         function deleteActivity(id) {
             event.preventDefault();
@@ -97,5 +109,65 @@
                 }
             });
         }
+
+        // Initialize DataTable with responsive options
+        $(document).ready(function() {
+            $('#dataTable-1').DataTable({
+                responsive: true,
+                autoWidth: false,
+                "lengthMenu": [
+                    [10, 25, 50, -1],
+                    [10, 25, 50, "All"]
+                ],
+                "order": [
+                    [5, "desc"]
+                ], // Sort by date column
+                "columnDefs": [{
+                        "orderable": false,
+                        "targets": 7
+                    } // Disable sorting on action column
+                ]
+            });
+        });
     </script>
+
+    <style>
+        .border-left-primary {
+            border-left: 4px solid #007bff !important;
+        }
+
+        .border-left-success {
+            border-left: 4px solid #28a745 !important;
+        }
+
+        .border-left-warning {
+            border-left: 4px solid #ffc107 !important;
+        }
+
+        .border-left-info {
+            border-left: 4px solid #17a2b8 !important;
+        }
+
+        .border-left-danger {
+            border-left: 4px solid #dc3545 !important;
+        }
+
+        .border-left-dark {
+            border-left: 4px solid #343a40 !important;
+        }
+
+        .modal-lg {
+            max-width: 900px;
+        }
+
+        .card {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            border: 1px solid rgba(0, 0, 0, 0.125);
+        }
+
+        .table-borderless td {
+            border: none;
+            padding: 0.25rem 0.5rem;
+        }
+    </style>
 @endsection

@@ -48,7 +48,7 @@
             </div>
             <div class="mb-3">
                 <label for="nik" class="form-label text-dark font-weight-bold">NIK</label>
-                <input type="text" class="form-control" name="nik" value="{{ old('nik') }}" maxlength="16"
+                <input type="number" class="form-control" name="nik" value="{{ old('nik') }}" maxlength="16"
                     placeholder="Masukan 16 digit NIK" required>
             </div>
 

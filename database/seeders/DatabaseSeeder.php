@@ -14,13 +14,26 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Call Seeder Lain
+        $this->call([
+            UserSeeder::class,
+            JenisObatSeeder::class,
+            ObatSeeder::class,
+        ]);
 
         User::create([
             'name' => 'Admin SIM RS',
             'telepon' => '08123456789',
             'password' => Hash::make('12345678'),
             'role' => 'Admin',
+        ]);
+
+        // Mantri -> Pemeriksaan, Rekam Medis
+        User::create([
+            'name' => 'Mantri SIM RS',
+            'telepon' => '081234567890',
+            'password' => Hash::make('12345678'),
+            'role' => 'Mantri',
         ]);
     }
 }

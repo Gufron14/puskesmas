@@ -40,4 +40,44 @@ class AntrianController extends Controller
 
         return redirect()->back()->with('success', $message);
     }
+
+    public function bukaAntrian(Request $request)
+    {
+        try {
+            $request->validate([
+                'jumlah' => 'required|integer|min:1|max:100',
+            ]);
+
+            $antrian = Antrian::first();
+
+            if ($antrian) {
+                // Update existing antrian
+                $antrian->update([
+                    'jumlah' => $request->jumlah,
+                    'status' => 'on',
+                ]);
+            } else {
+                // Create new antrian
+                Antrian::create([
+                    'jumlah' => $request->jumlah,
+                    'status' => 'on',
+                ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Antrian berhasil dibuka dengan kuota ' . $request->jumlah . ' pasien.'
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak valid: ' . implode(', ', $e->validator->errors()->all())
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }
