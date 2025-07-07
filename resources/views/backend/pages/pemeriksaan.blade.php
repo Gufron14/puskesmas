@@ -142,6 +142,19 @@
                             <div class="resep-item mb-3" data-index="{{ $index }}">
                                 <div class="row">
                                     <div class="col-md-2">
+                                        <label>Jenis Obat <span class="text-danger">*</span></label>
+                                        <select name="resep[{{ $index }}][jenis_obat]" class="form-control"
+                                            required>
+                                            <option value="">-- Pilih Jenis --</option>
+                                            @foreach ($jenisObats as $jenis)
+                                                <option value="{{ $jenis->id }}"
+                                                    {{ ($resep['jenis_obat'] ?? '') == $jenis->id ? 'selected' : '' }}>
+                                                    {{ $jenis->jenis_obat }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
                                         <label>Nama Obat <span class="text-danger">*</span></label>
                                         <select name="resep[{{ $index }}][nama_obat]" class="form-control"
                                             required>
@@ -155,19 +168,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
-                                        <label>Jenis Obat <span class="text-danger">*</span></label>
-                                        <select name="resep[{{ $index }}][jenis_obat]" class="form-control"
-                                            required>
-                                            <option value="">-- Pilih Jenis --</option>
-                                            @foreach ($jenisObats as $jenis)
-                                                <option value="{{ $jenis->id }}"
-                                                    {{ ($resep['jenis_obat'] ?? '') == $jenis->id ? 'selected' : '' }}>
-                                                    {{ $jenis->jenis_obat }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+
                                     <div class="col-md-2">
                                         <label>Harga Satuan</label>
                                         <input type="text" class="form-control harga-obat" readonly
@@ -433,16 +434,16 @@
                 const newResepHtml = `
         <div class="resep-item mb-3" data-index="${resepIndex}">
             <div class="row">
+                            <div class="col-md-2">
+                    <label>Jenis Obat <span class="text-danger">*</span></label>
+                    <select name="resep[${resepIndex}][jenis_obat]" class="form-control" required>
+                        ${jenisOptionsHtml}
+                    </select>
+                </div>
                 <div class="col-md-2">
                     <label>Nama Obat <span class="text-danger">*</span></label>
                     <select name="resep[${resepIndex}][nama_obat]" class="form-control" required>
                         ${optionsHtml}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label>Jenis Obat <span class="text-danger">*</span></label>
-                    <select name="resep[${resepIndex}][jenis_obat]" class="form-control" required>
-                        ${jenisOptionsHtml}
                     </select>
                 </div>
                 <div class="col-md-2">
