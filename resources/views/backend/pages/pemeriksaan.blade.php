@@ -188,7 +188,7 @@
                                                 Sesudah Makan</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         <label>Jumlah <span class="text-danger">*</span></label>
                                         <input type="number" name="resep[{{ $index }}][jumlah]"
                                             class="form-control" min="1" value="{{ $resep['jumlah'] ?? 1 }}"
