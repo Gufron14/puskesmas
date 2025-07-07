@@ -11340,3 +11340,8 @@ section#contact form#contactForm :-ms-input-placeholder {
 .bg-cs-success {
     background-color: #AEE9BF;
 }
+
+/* Hilangkan Icon Calendar pada Date Input */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+}
