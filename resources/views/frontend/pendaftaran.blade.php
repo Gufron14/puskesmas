@@ -21,116 +21,77 @@
                 $user = Auth::user();
             @endphp
 
-            <form action="{{ route('daftar.post') }}" method="POST">
-                @csrf
+@php
+    $user = Auth::user();
+@endphp
 
-                @if ($user)
-                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-                @endif
+<form action="{{ route('daftar.post') }}" method="POST">
+    @csrf
 
-                <div class="d-flex gap-3">
-                    <div class="col-md-6 mb-3">
-                        <label for="tanggal_antrian" class="form-label text-dark font-weight-bold">Tanggal Antrian</label>
-                        <input type="date" id="tanggal_antrian" name="tanggal_antrian" class="form-control" placeholder="Pilih tanggal" autocomplete="off" required>
-                    </div>
-    
-                    <div class="col-md-6 mb-3">
-                        <label for="noAntrian" class="form-label">Pilih No Antrian</label>
-                        <select name="nomor_antrian" id="noAntrian" class="form-control"
-                            {{ ($antrian && $antrian->status === 'off') ? 'disabled' : '' }} required disabled>
-                            <option value="" selected disabled>-- Pilih tanggal antrian terlebih dahulu --</option>
-                        </select>
-                        <div class="form-text" id="sisaAntrianInfo">
-                            <span class="text-muted">Silakan pilih tanggal antrian terlebih dahulu</span>
-                        </div>
-                    </div>
-                </div>
+    <div class="d-flex gap-3">
+        <div class="col-md-6 mb-3">
+            <label for="tanggal_antrian" class="form-label">Tanggal Antrian</label>
+            <input type="date" id="tanggal_antrian" name="tanggal_antrian" class="form-control" required>
+        </div>
 
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="col-md-3 mb-3">
-                        <label for="nama_pasien" class="form-label text-dark font-weight-bold">Nama Pasien</label>
-                        <input type="text" class="form-control" name="nama_pasien" value="{{ optional($user)->name }}"
-                            placeholder="Masukan nama lengkap" disabled>
-                    </div>
+        <div class="col-md-6 mb-3">
+            <label for="noAntrian" class="form-label">Pilih No Antrian</label>
+            <select name="nomor_antrian" id="noAntrian" class="form-control" required disabled>
+                <option value="" selected disabled>-- Pilih tanggal terlebih dahulu --</option>
+            </select>
+            <div class="form-text" id="sisaAntrianInfo">
+                <span class="text-muted">Silakan pilih tanggal terlebih dahulu</span>
+            </div>
+        </div>
+    </div>
 
-                    <div class=" col-md-2 mb-3">
-                        <label for="nik" class="form-label text-dark font-weight-bold">NIK</label>
-                        <input type="text" class="form-control" name="nik" value="{{ optional($user)->nik }}"
-                            placeholder="Masukan 16 digit NIK" disabled>
-                    </div>
+    <div class="d-flex gap-3 mb-3 flex-wrap">
+        <div class="col-md-3 mb-3">
+            <label for="nama_pasien" class="form-label">Nama Pasien</label>
+            <input type="text" class="form-control" name="nama_pasien"
+                value="{{ old('nama_pasien', optional($user)->name) }}" placeholder="Nama lengkap">
+        </div>
 
-                    <div class="col-md-2 mb-3">
-                        <label for="usia" class="form-label text-dark font-weight-bold">Usia</label>
-                        <input type="number" class="form-control" min="1" name="usia"
-                            value="{{ optional($user)->usia }}" disabled>
-                    </div>
-    
-                    {{-- <div class="col-md-3 mb-3">
-                        <label class="font-weight-bold" for="jenis_kelamin">Jenis Kelamin</label>
-                        <div class="d-flex align-items-center" style="gap: 10px">
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="customRadio1" name="jenis_kelamin" class="custom-control-input"
-                                    value="Laki-laki" {{ optional($user)->jenis_kelamin == 'Laki-laki' ? 'checked' : '' }}
-                                    disabled>
-                                <label class="custom-control-label" for="customRadio1">Laki-Laki</label>
-                            </div>
-                            <div class="custom-control custom-radio">
-                                <input type="radio" id="customRadio2" name="jenis_kelamin" class="custom-control-input"
-                                    value="Perempuan" {{ optional($user)->jenis_kelamin == 'Perempuan' ? 'checked' : '' }}
-                                    disabled>
-                                <label class="custom-control-label" for="customRadio2">Perempuan</label>
-                            </div>
-                        </div>
-                    </div> --}}
+        <div class="col-md-2 mb-3">
+            <label for="nik" class="form-label">NIK</label>
+            <input type="text" class="form-control" name="nik"
+                value="{{ old('nik', optional($user)->nik) }}" placeholder="16 digit NIK">
+        </div>
 
-                    <div class="col-md-2 mb-3">
-                        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-                        <select name="jenis_kelamin" id="jenis_kelamin" class="form-select" disabled>
-                            <option value="{{ old('jenis_kelamin', $user->jenis_kelamin) }}" selected>
-                                {{ old('jenis_kelamin', $user->jenis_kelamin) }}
-                            </option>
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
-                        </select>
-                    </div>
+        <div class="col-md-2 mb-3">
+            <label for="usia" class="form-label">Usia</label>
+            <input type="number" class="form-control" name="usia" min="1"
+                value="{{ old('usia', optional($user)->usia) }}">
+        </div>
 
-                    <div class="col-md-2 mb-3">
-                        <label for="telepon" class="form-label text-dark font-weight-bold">No Telepon</label>
-                        <input id="telepon" type="text" class="form-control" name="telepon"
-                            value="{{ optional($user)->telepon }}"
-                            placeholder="Masukan nomor telepon aktif (Contoh: 081234567890)" disabled autocomplete="tel"
-                            pattern="^08[0-9]{8,12}" title="Nomor harus dimulai dari 08 dan hanya angka">
-                    </div>
-    
-                </div>
+        <div class="col-md-2 mb-3">
+            <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+            <select name="jenis_kelamin" class="form-select">
+                <option value="">Pilih</option>
+                <option value="Laki-laki" {{ old('jenis_kelamin', optional($user)->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="Perempuan" {{ old('jenis_kelamin', optional($user)->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
+            </select>
+        </div>
 
-                <div class="mb-3">
-                    <label for="alamat" class="form-label text-dark font-weight-bold">Alamat</label>
-                    <textarea class="form-control" name="alamat" rows="3" placeholder="Masukan alamat lengkap" disabled>{{ optional($user)->alamat }}</textarea>
-                </div>
+        <div class="col-md-3 mb-3">
+            <label for="telepon" class="form-label">Telepon</label>
+            <input type="text" class="form-control" name="telepon"
+                value="{{ old('telepon', optional($user)->telepon) }}" placeholder="Contoh: 081234567890">
+        </div>
+    </div>
 
-                @if ($antrian && $antrian->status === 'on')
-                    <div class="float-right mt-5">
-                        {{-- <a href="{{ route('pasien.index') }}" class="btn btn-danger">Kembali</a> --}}
+    <div class="mb-3">
+        <label for="alamat" class="form-label">Alamat</label>
+        <textarea class="form-control" name="alamat" rows="3" placeholder="Masukan alamat lengkap">{{ old('alamat', optional($user)->alamat) }}</textarea>
+    </div>
 
-                        @if ($user)
-                            {{-- ✅ Antrian ON & user login: bisa submit --}}
-                            <button type="submit" class="btn btn-success text-white fw-bold w-25">Simpan</button>
-                        @else
-                            {{-- ⚠️ Antrian ON tapi belum login: tombol aktif tapi munculkan SweetAlert --}}
-                            <button type="button" class="btn btn-success text-white"
-                                onclick="showLoginWarning()">Simpan</button>
-                        @endif
-                    </div>
-                @else
-                    {{-- 🔒 Antrian OFF: munculkan SweetAlert antrian ditutup --}}
-                    <div class="float-right">
-                        {{-- <a href="{{ route('pasien.index') }}" class="btn btn-danger">Kembali</a> --}}
-                        <button class="btn btn-success text-white" type="button"
-                            onclick="showAntrianTutup()">Simpan</button>
-                    </div>
-                @endif
-            </form>
+    @if ($antrian && $antrian->status === 'on')
+        <button type="submit" class="btn btn-success">Simpan</button>
+    @else
+        <button type="button" class="btn btn-secondary" onclick="showAntrianTutup()">Antrian Ditutup</button>
+    @endif
+</form>
+
         </div>
     </section>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
