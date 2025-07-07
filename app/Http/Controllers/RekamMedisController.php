@@ -260,7 +260,7 @@ class RekamMedisController extends Controller
         $user = Auth::user();
 
         // Jika admin, bisa akses semua pemeriksaan
-        if ($user->role === 'Admin') {
+        if ($user->role === 'Admin' || $user->role === 'Mantri') {
             $pemeriksaan = Pemeriksaan::with('user')->findOrFail($id);
         } else {
             // Jika user biasa, hanya bisa akses pemeriksaan milik sendiri

@@ -76,7 +76,7 @@ Route::middleware(['auth', 'role:Admin,Mantri'])->group(function () {
 
 Route::get('/pemeriksaan/print/{id}', [RekamMedisController::class, 'printPemeriksaan'])->name('laporan.print');
 
-Route::get('/pemeriksaan/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
+Route::get('/rekamedis/export-pdf/{id}', [RekamMedisController::class, 'exportPdf'])->name('pemeriksaan.exportPdf');
 
 Route::get('/saran-keluhan', [MasukanController::class, 'index'])->name('masukan');
 Route::get('/pelayanan', [PendaftaranController::class, 'index'])->name('daftar');
