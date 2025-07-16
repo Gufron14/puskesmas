@@ -59,7 +59,7 @@
                             value="{{ old('nik', optional($user)->nik) }}" placeholder="16 digit NIK" disabled>
                     </div>
 
-                    <div class="col-md-2 mb-3">
+                    <div class="col-md-1 mb-3">
                         <label for="usia" class="form-label">Usia</label>
                         <input type="number" class="form-control" name="usia" min="1"
                             value="{{ old('usia', optional($user)->usia) }}" disabled>
