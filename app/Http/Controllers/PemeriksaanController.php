@@ -15,7 +15,12 @@ class PemeriksaanController extends Controller
 {
     public function index()
     {
-        $pasiens = Pasien::with('user')->where('status', 'menunggu')->orderBy('created_at', 'DESC')->get();
+        $tanggal = now()->toDateString();
+        $pasiens = Pasien::with('user')
+            ->where('status', 'menunggu')
+            ->where('tanggal_antrian', $tanggal)
+            ->orderBy('nomor_antrian', 'ASC')
+            ->get();
         $obats = Obat::where('status', 'aktif')->where('stok', '>', 0)->orderBy('nama')->get();
         $jenisObats = JenisObat::all();
     

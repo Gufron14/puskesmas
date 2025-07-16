@@ -21,76 +21,85 @@
                 $user = Auth::user();
             @endphp
 
-@php
-    $user = Auth::user();
-@endphp
+            <form action="{{ route('daftar.post') }}" method="POST">
+                @csrf
+                
+                {{-- Add hidden user_id field --}}
+                @if($user)
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                @endif
 
-<form action="{{ route('daftar.post') }}" method="POST">
-    @csrf
+                <div class="d-flex gap-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="tanggal_antrian" class="form-label">Tanggal Antrian</label>
+                        <input type="date" id="tanggal_antrian" name="tanggal_antrian" class="form-control" required>
+                    </div>
 
-    <div class="d-flex gap-3">
-        <div class="col-md-6 mb-3">
-            <label for="tanggal_antrian" class="form-label">Tanggal Antrian</label>
-            <input type="date" id="tanggal_antrian" name="tanggal_antrian" class="form-control" required>
-        </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="noAntrian" class="form-label">Pilih No Antrian</label>
+                        <select name="nomor_antrian" id="noAntrian" class="form-control" required disabled>
+                            <option value="" selected disabled>-- Pilih tanggal terlebih dahulu --</option>
+                        </select>
+                        <div class="form-text" id="sisaAntrianInfo">
+                            <span class="text-muted">Silakan pilih tanggal terlebih dahulu</span>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="col-md-6 mb-3">
-            <label for="noAntrian" class="form-label">Pilih No Antrian</label>
-            <select name="nomor_antrian" id="noAntrian" class="form-control" required disabled>
-                <option value="" selected disabled>-- Pilih tanggal terlebih dahulu --</option>
-            </select>
-            <div class="form-text" id="sisaAntrianInfo">
-                <span class="text-muted">Silakan pilih tanggal terlebih dahulu</span>
-            </div>
-        </div>
-    </div>
+                <div class="d-flex gap-3 mb-3 flex-wrap">
+                    <div class="col-md-3 mb-3">
+                        <label for="nama_pasien" class="form-label">Nama Pasien</label>
+                        <input type="text" class="form-control" name="nama_pasien"
+                            value="{{ old('nama_pasien', optional($user)->name) }}" placeholder="Nama lengkap" disabled>
+                    </div>
 
-    <div class="d-flex gap-3 mb-3 flex-wrap">
-        <div class="col-md-3 mb-3">
-            <label for="nama_pasien" class="form-label">Nama Pasien</label>
-            <input type="text" class="form-control" name="nama_pasien"
-                value="{{ old('nama_pasien', optional($user)->name) }}" placeholder="Nama lengkap">
-        </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="nik" class="form-label">NIK</label>
+                        <input type="text" class="form-control" name="nik"
+                            value="{{ old('nik', optional($user)->nik) }}" placeholder="16 digit NIK" disabled>
+                    </div>
 
-        <div class="col-md-2 mb-3">
-            <label for="nik" class="form-label">NIK</label>
-            <input type="text" class="form-control" name="nik"
-                value="{{ old('nik', optional($user)->nik) }}" placeholder="16 digit NIK">
-        </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="usia" class="form-label">Usia</label>
+                        <input type="number" class="form-control" name="usia" min="1"
+                            value="{{ old('usia', optional($user)->usia) }}" disabled>
+                    </div>
 
-        <div class="col-md-2 mb-3">
-            <label for="usia" class="form-label">Usia</label>
-            <input type="number" class="form-control" name="usia" min="1"
-                value="{{ old('usia', optional($user)->usia) }}">
-        </div>
+                    <div class="col-md-2 mb-3">
+                        <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                        <select name="jenis_kelamin" class="form-select" disabled>
+                            <option value="">Pilih</option>
+                            <option value="Laki-laki"
+                                {{ old('jenis_kelamin', optional($user)->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>
+                                Laki-laki</option>
+                            <option value="Perempuan"
+                                {{ old('jenis_kelamin', optional($user)->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>
+                                Perempuan</option>
+                        </select>
+                    </div>
 
-        <div class="col-md-2 mb-3">
-            <label for="jenis_kelamin" class="form-label">Jenis Kelamin</label>
-            <select name="jenis_kelamin" class="form-select">
-                <option value="">Pilih</option>
-                <option value="Laki-laki" {{ old('jenis_kelamin', optional($user)->jenis_kelamin) == 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
-                <option value="Perempuan" {{ old('jenis_kelamin', optional($user)->jenis_kelamin) == 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
-            </select>
-        </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="telepon" class="form-label">Telepon</label>
+                        <input type="text" class="form-control" name="telepon"
+                            value="{{ old('telepon', optional($user)->telepon) }}" placeholder="Contoh: 081234567890" disabled>
+                    </div>
+                </div>
 
-        <div class="col-md-3 mb-3">
-            <label for="telepon" class="form-label">Telepon</label>
-            <input type="text" class="form-control" name="telepon"
-                value="{{ old('telepon', optional($user)->telepon) }}" placeholder="Contoh: 081234567890">
-        </div>
-    </div>
+                <div class="mb-3">
+                    <label for="alamat" class="form-label">Alamat</label>
+                    <textarea class="form-control" name="alamat" rows="3" disabled placeholder="Masukan alamat lengkap">{{ old('alamat', optional($user)->alamat) }}</textarea>
+                </div>
 
-    <div class="mb-3">
-        <label for="alamat" class="form-label">Alamat</label>
-        <textarea class="form-control" name="alamat" rows="3" placeholder="Masukan alamat lengkap">{{ old('alamat', optional($user)->alamat) }}</textarea>
-    </div>
-
-    @if ($antrian && $antrian->status === 'on')
-        <button type="submit" class="btn btn-success">Simpan</button>
-    @else
-        <button type="button" class="btn btn-secondary" onclick="showAntrianTutup()">Antrian Ditutup</button>
-    @endif
-</form>
+                @if ($antrian && $antrian->status === 'on')
+                    @if($user)
+                        <button type="submit" class="btn btn-success">Simpan</button>
+                    @else
+                        <button type="button" class="btn btn-warning" onclick="showLoginWarning()">Login untuk Mendaftar</button>
+                    @endif
+                @else
+                    <button type="button" class="btn btn-secondary" onclick="showAntrianTutup()">Antrian Ditutup</button>
+                @endif
+            </form>
 
         </div>
     </section>
@@ -140,11 +149,12 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Bootstrap Datepicker CSS & JS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#tanggal_antrian').datepicker({
                 format: 'yyyy-mm-dd',
                 autoclose: true,
@@ -171,14 +181,14 @@
         function loadNomorAntrian(tanggal) {
             const selectAntrian = $('#noAntrian');
             const sisaAntrianInfo = $('#sisaAntrianInfo');
-            
-            @if(!$user)
+
+            @if (!$user)
                 // Jika user belum login, tampilkan pesan dan jangan lakukan AJAX
                 selectAntrian.html('<option value="" disabled>Silakan login terlebih dahulu</option>');
                 sisaAntrianInfo.html('<span class="text-warning">Silakan login untuk melihat antrian</span>');
                 return;
             @endif
-            
+
             // Reset dropdown
             selectAntrian.prop('disabled', true).html('<option value="">Loading...</option>');
             sisaAntrianInfo.html('<span class="text-muted">Loading...</span>');
@@ -193,22 +203,27 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        selectAntrian.html('<option value="" selected disabled>-- Pilih Nomor Antrian --</option>');
-                        
+                        selectAntrian.html(
+                            '<option value="" selected disabled>-- Pilih Nomor Antrian --</option>');
+
                         if (response.data.length > 0) {
                             response.data.forEach(function(item) {
-                                selectAntrian.append(`<option value="${item.nomor}">Antrian Nomor ${item.nomor}</option>`);
+                                selectAntrian.append(
+                                    `<option value="${item.nomor}">Antrian Nomor ${item.nomor}</option>`
+                                    );
                             });
                             selectAntrian.prop('disabled', false);
-                            sisaAntrianInfo.html(`<span class="text-success">Sisa antrian: ${response.sisaAntrian}</span>`);
+                            sisaAntrianInfo.html(
+                                `<span class="text-success">Sisa antrian: ${response.sisaAntrian}</span>`);
                         } else {
                             selectAntrian.html('<option value="" disabled>Maaf, kuota antrian penuh</option>');
-                            sisaAntrianInfo.html('<span class="text-danger">Tidak ada sisa antrian untuk tanggal ini</span>');
+                            sisaAntrianInfo.html(
+                                '<span class="text-danger">Tidak ada sisa antrian untuk tanggal ini</span>');
                         }
                     } else {
                         selectAntrian.html('<option value="" disabled>Tidak dapat memuat antrian</option>');
                         sisaAntrianInfo.html(`<span class="text-danger">${response.message}</span>`);
-                        
+
                         // Show error message
                         if (response.message.includes('login')) {
                             Swal.fire({
@@ -235,7 +250,7 @@
                 error: function(xhr) {
                     selectAntrian.html('<option value="" disabled>Error memuat data</option>');
                     sisaAntrianInfo.html('<span class="text-danger">Terjadi kesalahan</span>');
-                    
+
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
