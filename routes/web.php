@@ -63,7 +63,7 @@ Route::middleware(['auth', 'role:Admin,Mantri'])->group(function () {
     // Print routes
 
     Route::get('/pembayaran/print/{id}', [RekamMedisController::class, 'printInvoice'])->name('pembayaran.print');
-    Route::get('/laporan/print-bulanan', [RekamMedisController::class, 'printLaporanBulanan'])->name('laporan.print');
+    Route::get('/laporan/print-bulanan', [RekamMedisController::class, 'printLaporanBulanan'])->name('laporan.bulanan.print');
 
     // Spesifik Resource CRUD Obat
     Route::get('/obat', [ObatController::class, 'index'])->name('obat.index');

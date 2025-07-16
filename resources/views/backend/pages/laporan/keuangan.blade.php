@@ -53,33 +53,32 @@
                     </div>
                 </div>
 
-                <script>
-                    function cetakLangsung() {
-                        const bulan = document.getElementById('bulan').value;
-                        const tahun = document.getElementById('tahun').value;
+<script>
+    function cetakLangsung() {
+        const bulan = document.getElementById('bulan').value;
+        const tahun = document.getElementById('tahun').value;
+        if (bulan && tahun) {
+            const url = `{{ route('laporan.bulanan.print') }}?bulan=${bulan}&tahun=${tahun}`;
+            window.open(url, '_blank');
+            $('#modalLaporan').modal('hide');
+        } else {
+            alert('Silakan pilih bulan dan tahun terlebih dahulu');
+        }
+    }
 
-                        if (bulan && tahun) {
-                            const url = `{{ route('laporan.print') }}?bulan=${bulan}&tahun=${tahun}`;
-                            window.open(url, '_blank');
-                            $('#modalLaporan').modal('hide');
-                        } else {
-                            alert('Silakan pilih bulan dan tahun terlebih dahulu');
-                        }
-                    }
+    function downloadPdf() {
+        const bulan = document.getElementById('bulan').value;
+        const tahun = document.getElementById('tahun').value;
+        if (bulan && tahun) {
+            const url = `{{ route('laporan.bulanan') }}?bulan=${bulan}&tahun=${tahun}`;
+            window.open(url, '_blank');
+            $('#modalLaporan').modal('hide');
+        } else {
+            alert('Silakan pilih bulan dan tahun terlebih dahulu');
+        }
+    }
+</script>
 
-                    function downloadPdf() {
-                        const bulan = document.getElementById('bulan').value;
-                        const tahun = document.getElementById('tahun').value;
-
-                        if (bulan && tahun) {
-                            const url = `{{ route('laporan.bulanan') }}?bulan=${bulan}&tahun=${tahun}`;
-                            window.open(url, '_blank');
-                            $('#modalLaporan').modal('hide');
-                        } else {
-                            alert('Silakan pilih bulan dan tahun terlebih dahulu');
-                        }
-                    }
-                </script>
 
             </div>
         </div>
