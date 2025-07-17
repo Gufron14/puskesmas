@@ -49,13 +49,13 @@
                             <td>
                                 <a type="button" class="btn  btn-primary"
                                     href="{{ route('pasien.edit', $pasien->id) }}"><i class="fe fe-edit fe-16"></i></a>
-                                <button class="btn btn-danger" onclick="deleteActivity({{ $pasien->id }})"><i
+                                {{-- <button class="btn btn-danger" onclick="deleteActivity({{ $pasien->id }})"><i
                                         class="fe fe-trash fe-16"></i></button>
                                 <form id="Hapus{{ $pasien->id }}" action="{{ route('pasien.destroy', $pasien->id) }}"
                                     method="POST" style="display: none;">
                                     @csrf
                                     @method('DELETE')
-                                </form>
+                                </form> --}}
                             </td>
                         </tr>
                     @endforeach
