@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JenisObat;
 use App\Models\Obat;
 use Illuminate\Http\Request;
 
@@ -14,16 +15,16 @@ class ObatController extends Controller
     {
         // Dari model Obat
         $obats = Obat::all();
+        $jenis_obats = JenisObat::all();
 
         // Filter Search
         if (request('search')) {
             $obats = Obat::where(function ($query) {
-                $query->where('nama', 'like', '%' . request('search') . '%')
-                    ->orWhere('deskripsi', 'like', '%' . request('search') . '%');
+                $query->where('nama', 'like', '%' . request('search') . '%')->orWhere('deskripsi', 'like', '%' . request('search') . '%');
             })->get();
         }
 
-        return view('backend.pages.obat', compact('obats'));
+        return view('backend.pages.obat', compact('obats', 'jenis_obats'));
     }
 
     /**
@@ -46,13 +47,14 @@ class ObatController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'nullable|integer|min:0',
             'deskripsi' => 'nullable|string',
+            'jenis_obat_id' => 'required|exists:jenis_obats,id',
         ]);
-
         $obat = Obat::create([
             'nama' => $request->nama,
             'harga' => $request->harga,
             'stok' => $request->stok ?? 0,
             'deskripsi' => $request->deskripsi,
+            'jenis_obat_id' => $request->jenis_obat_id,
         ]);
 
         // Return JSON response for AJAX
@@ -60,7 +62,7 @@ class ObatController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Obat berhasil ditambahkan',
-                'data' => $obat
+                'data' => $obat,
             ]);
         }
 
@@ -88,7 +90,7 @@ class ObatController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'data' => $obat
+                'data' => $obat,
             ]);
         }
 
@@ -111,11 +113,14 @@ class ObatController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'data' => $obat
+                'data' => $obat,
             ]);
         }
 
-        return view('backend.pages.obat.edit', compact('obat'));
+        return view('backend.pages.obat.edit', [
+            'obat' => $obat,
+            'jenis_obats' => JenisObat::all(),
+        ]);
     }
 
     /**
@@ -129,10 +134,10 @@ class ObatController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'nullable|integer|min:0',
             'deskripsi' => 'nullable|string',
+            'jenis_obat_id' => 'required|exists:jenis_obats,id',
         ]);
-
         $obat = Obat::find($id);
-        
+
         if (!$obat) {
             if ($request->ajax()) {
                 return response()->json(['error' => 'Obat tidak ditemukan'], 404);
@@ -145,6 +150,7 @@ class ObatController extends Controller
             'harga' => $request->harga,
             'stok' => $request->stok ?? 0,
             'deskripsi' => $request->deskripsi,
+            'jenis_obat_id' => $request->jenis_obat_id,
         ]);
 
         // Return JSON response for AJAX
@@ -152,7 +158,7 @@ class ObatController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Obat berhasil diupdate',
-                'data' => $obat
+                'data' => $obat,
             ]);
         }
 
@@ -171,7 +177,7 @@ class ObatController extends Controller
     {
         // Hapus Obat
         $obat = Obat::find($id);
-        
+
         if (!$obat) {
             if (request()->ajax()) {
                 return response()->json(['error' => 'Obat tidak ditemukan'], 404);
@@ -185,7 +191,7 @@ class ObatController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Obat berhasil dihapus'
+                'message' => 'Obat berhasil dihapus',
             ]);
         }
 

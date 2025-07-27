@@ -5,30 +5,30 @@
         <h4 class="font-weight-bold text-dark mb-4">Rekam Medis</h4>
 
         <!-- Filter Periode untuk Print -->
-            <div class="mb-5">
-                <form method="GET" action="{{ url('/admin/rekamedis/print-laporan') }}" target="_blank">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <label for="tanggal_mulai">Tanggal Mulai</label>
-                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control"
-                                value="{{ request('tanggal_mulai', date('Y-m-01')) }}" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label for="tanggal_selesai">Tanggal Selesai</label>
-                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control"
-                                value="{{ request('tanggal_selesai', date('Y-m-d')) }}" required>
-                        </div>
-                        <div class="col-md-3">
-                            <label>&nbsp;</label>
-                            <div>
-                                <button type="submit" class="btn btn-success">
-                                    <i class="fe fe-printer"></i> Print Laporan
-                                </button>
-                            </div>
+        <div class="mb-5">
+            <form method="GET" action="{{ url('/admin/rekamedis/print-laporan') }}" target="_blank">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="tanggal_mulai">Tanggal Mulai</label>
+                        <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="form-control"
+                            value="{{ request('tanggal_mulai', date('Y-m-01')) }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="tanggal_selesai">Tanggal Selesai</label>
+                        <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="form-control"
+                            value="{{ request('tanggal_selesai', date('Y-m-d')) }}" required>
+                    </div>
+                    <div class="col-md-3">
+                        <label>&nbsp;</label>
+                        <div>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fe fe-printer"></i> Print Laporan
+                            </button>
                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
+        </div>
 
 
         <div class="table-responsive">
@@ -37,10 +37,10 @@
                     <tr>
                         <th>No</th>
                         <th>Nama Pasien</th>
-                            <th>Suhu</th>
-                            <th>Tensi</th>
+                        <th>Suhu</th>
+                        <th>Tensi</th>
                         <th>Resep Obat</th>
-                        <th>Total Bayar</th>
+                        {{-- <th>Total Bayar</th> --}}
                         <th>Tanggal</th>
                         <th>Aksi</th>
                     </tr>
@@ -68,7 +68,7 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
-                            <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
+                            {{-- <td>Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td> --}}
                             <td>
                                 {{ \Carbon\Carbon::parse($item->waktu_pemeriksaan)->locale('id')->translatedFormat('l, d F Y, H:i') }}
                             </td>
@@ -77,11 +77,12 @@
                                     <a href="{{ route('rekamedis.show', $item->id) }}" type="button"
                                         class="btn btn-info btn-sm">
                                         <i class="fe fe-eye"></i> Detail
-                                        </>
-                                        <a href="{{ route('rekamedis.edit', $item->id) }}"
-                                            class="btn btn-primary btn-sm text-white">
-                                            <i class="fe fe-edit"></i> Edit
-                                        </a>
+                                    </a>
+                                        @if (auth()->check() && auth()->user()->role == 'Mantri')
+                                            <a href="{{ route('rekamedis.edit', $item->id) }}"
+                                                class="btn btn-primary btn-sm text-white">
+                                                <i class="fe fe-edit"></i> Edit
+                                        @endif
                                         <button type="button" class="btn btn-success btn-sm dropdown-toggle"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fe fe-printer"></i> Cetak

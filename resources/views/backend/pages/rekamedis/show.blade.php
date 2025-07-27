@@ -132,9 +132,9 @@
                             <th>Nama Obat</th>
                             <th>Jenis Obat</th>
                             <th>Jumlah</th>
-                            <th>Harga Satuan</th>
+                            {{-- <th>Harga Satuan</th> --}}
                             <th>Aturan Minum</th>
-                            <th>Subtotal</th>
+                            {{-- <th>Subtotal</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -143,22 +143,22 @@
                                 <td><strong>{{ $r['nama_obat'] ?? ($r['nama'] ?? '-') }}</strong></td>
                                 <td><span class="badge badge-secondary">{{ $r['jenis_obat'] ?? 'Tidak Diketahui' }}</span></td>
                                 <td><span class="badge badge-primary">{{ $r['jumlah'] ?? 0 }} pcs</span></td>
-                                <td>Rp{{ number_format($r['harga'] ?? 0, 0, ',', '.') }}</td>
+                                {{-- <td>Rp{{ number_format($r['harga'] ?? 0, 0, ',', '.') }}</td> --}}
                                 <td>
                                     <span class="badge badge-{{ ($r['keterangan_makan'] ?? '') == 'sesudah_makan' ? 'success' : 'warning' }}">
                                         {{ $r['keterangan_display'] ?? ucwords(str_replace('_', ' ', $r['keterangan_makan'] ?? '-')) }}
                                     </span>
                                 </td>
-                                <td><strong>Rp{{ number_format(($r['jumlah'] ?? 0) * ($r['harga'] ?? 0), 0, ',', '.') }}</strong></td>
+                                {{-- <td><strong>Rp{{ number_format(($r['jumlah'] ?? 0) * ($r['harga'] ?? 0), 0, ',', '.') }}</strong></td> --}}
                             </tr>
                         @endforeach
                     </tbody>
-                    <tfoot class="thead-light">
+                    {{-- <tfoot class="thead-light">
                         <tr>
                             <th colspan="5" class="text-right">Total Obat:</th>
                             <th>Rp{{ number_format($totalObat, 0, ',', '.') }}</th>
                         </tr>
-                    </tfoot>
+                    </tfoot> --}}
                 </table>
             </div>
         @else
@@ -170,7 +170,7 @@
 </div>
 
 <!-- Ringkasan Biaya -->
-<div class="card border-left-dark mt-4">
+{{-- <div class="card border-left-dark mt-4">
     <div class="card-body">
         <h6 class="card-title text-dark"><i class="fe fe-dollar-sign"></i> Ringkasan Biaya</h6>
         <div class="table-responsive">
@@ -193,6 +193,6 @@
             </table>
         </div>
     </div>
-</div>
+</div> --}}
 
 @endsection

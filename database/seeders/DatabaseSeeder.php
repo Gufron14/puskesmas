@@ -35,5 +35,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('12345678'),
             'role' => 'Mantri',
         ]);
+
+        User::create([
+            'name' => 'Puskesmas Induk',
+            'telepon' => '081234567891',
+            'password' => Hash::make('12345678'),
+            'role' => 'Puskesmas Induk',
+        ]);
     }
 }

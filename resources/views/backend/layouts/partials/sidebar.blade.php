@@ -36,7 +36,7 @@
                     </a>
                 </li>
             @endif
-            @if (auth()->check() && auth()->user()->role == 'Mantri')                
+            @if (auth()->check() && auth()->user()->role == 'Mantri')
                 <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('pemeriksaan') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('pemeriksaan') }}">
                         <i class="fe fe-file-text fe-16"></i>
@@ -50,8 +50,8 @@
                     <span class="ml-3 item-text font-weight-bold">Rekam Medis</span>
                 </a>
             </li>
-            @if (auth()->check() && auth()->user()->role == 'Mantri')  
-                <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('obat') ? 'active' : '' }}">
+            @if ((auth()->check() && auth()->user()->role == 'Mantri') || auth()->user()->role == 'Puskesmas Induk')
+                <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('obat.index') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('obat.index') }}">
                         <i class="fe fe-box fe-16"></i>
                         <span class="ml-3 item-text font-weight-bold">Obat</span>
@@ -75,6 +75,15 @@
                     <a class="nav-link" href="{{ route('pengaturan.antrian') }}">
                         <i class="fe fe-settings fe-16"></i>
                         <span class="ml-3 item-text font-weight-bold">Antrian</span>
+                    </a>
+                </li>
+            @endif
+            {{-- Menu untuk Puskesmas Induk (hanya Data Laporan) --}}
+            @if (auth()->check() && auth()->user()->role == 'Puskesmas Induk')
+                <li class="nav-item w-100 mb-2 {{ Route::currentRouteNamed('datalaporan') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('datalaporan') }}">
+                        <i class="fe fe-printer fe-16"></i>
+                        <span class="ml-3 item-text font-weight-bold">Data Laporan</span>
                     </a>
                 </li>
             @endif

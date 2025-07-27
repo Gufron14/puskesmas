@@ -33,7 +33,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Khusus admin
-Route::middleware(['auth', 'role:Admin,Mantri'])->group(function () {
+Route::middleware(['auth', 'role:Admin,Mantri,Puskesmas Induk'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'index'])->name('home');
     Route::resource('pasien', UserController::class);
     Route::resource('antrian', PasienController::class);

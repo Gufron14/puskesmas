@@ -30,19 +30,8 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="noAntrian" class="form-label">Pilih No Antrian</label>
-                <select name="nomor_antrian" id="noAntrian" class="form-control" required>
-                    @if ($sisaAntrian > 0)
-                        <option value="" selected disabled>-- Pilih Nomor Antrian --</option>
-                        @foreach ($nomorWaktu as $item)
-                            <option value="{{ $item['nomor'] }}">
-                                Antrian Nomor {{ $item['nomor'] }}
-                            </option>
-                        @endforeach
-                    @else
-                        <option value="">Maaf, kuota antrian hari ini penuh.</option>
-                    @endif
-                </select>
+                <label for="nomorAntrian" class="form-label">Nomor Antrian</label>
+                <input type="text" class="form-control" id="nomorAntrian" value="Antrian Ke-{{ $nextNomor }}" disabled>
                 <div class="form-text text-danger">
                     @if ($sisaAntrian > 0)
                         Sisa antrian hari ini: {{ $sisaAntrian }}

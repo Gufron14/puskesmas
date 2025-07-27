@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
         // ]);
 
         // Buat 100 user biasa
-        for ($i = 1; $i <= 100; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             $jenisKelamin = $faker->randomElement(['Laki-laki', 'Perempuan']);
             $firstName = $jenisKelamin === 'Laki-laki' 
                 ? $faker->firstNameMale 
@@ -42,7 +42,7 @@ class UserSeeder extends Seeder
                 'name' => $firstName . ' ' . $faker->lastName,
                 'email' => $faker->unique()->safeEmail,
                 'telepon' => $this->generatePhoneNumber($faker),
-                'password' => Hash::make('password123'), // Password default
+                'password' => Hash::make('password'), // Password default
                 'foto' => null, // Bisa ditambahkan jika ingin random foto
                 'role' => 'User',
                 'jenis_kelamin' => $jenisKelamin,

@@ -17,46 +17,37 @@ class PasienController extends Controller
      */
     public function index()
     {
-        $pasiens = Pasien::orderBy('created_at', 'DESC')->get();
-        $antrian = Antrian::first();
+        $pasiens = Pasien::where('tanggal_antrian', date('Y-m-d'))->orderBy('created_at', 'DESC')->get();
+        $antrian = Antrian::where('status', 'on')->first();
         return view('backend.pages.antri.index', compact('pasiens', 'antrian'));
     }
 
-    public function create()
-    {
-        $antrian = Antrian::first();
-        $kuota_harian = $antrian ? $antrian->jumlah : 0;
-        $tanggal = now()->toDateString();
+public function create()
+{
+    $antrian = Antrian::first();
+    $kuota_harian = $antrian ? $antrian->jumlah : 0;
+    $tanggal = now()->toDateString();
 
-        // Ambil nomor antrian yang sudah terpakai hari ini
-        $antrian_terpakai = Pasien::where('tanggal_antrian', $tanggal)->pluck('nomor_antrian')->toArray();
+    $antrian_terpakai = Pasien::where('tanggal_antrian', $tanggal)->pluck('nomor_antrian')->toArray();
+    $semua_nomor = $kuota_harian > 0 ? range(1, $kuota_harian) : [];
+    $nomor_tersedia = array_diff($semua_nomor, $antrian_terpakai);
 
-        // Hindari range invalid jika kuota 0
-        $semua_nomor = $kuota_harian > 0 ? range(1, $kuota_harian) : [];
+    $sisaAntrian = count($nomor_tersedia);
 
-        // Cari nomor yang masih tersedia
-        $nomor_tersedia = array_diff($semua_nomor, $antrian_terpakai);
+    // Nomor antrian berikutnya (otomatis)
+    $lastNomor = Pasien::where('tanggal_antrian', $tanggal)->max('nomor_antrian');
+    $nextNomor = $lastNomor ? $lastNomor + 1 : 1;
 
-        // Format sebagai array berisi ['nomor' => X]
-        $nomorWaktu = [];
-        foreach ($nomor_tersedia as $no) {
-            $nomorWaktu[] = [
-                'nomor' => $no,
-            ];
-        }
+    $pasiens = User::where('role', 'User')
+        ->whereDoesntHave('pasiens', function ($query) use ($tanggal) {
+            $query->where('tanggal_antrian', $tanggal);
+        })
+        ->orderBy('created_at', 'DESC')
+        ->get();
 
-        $sisaAntrian = count($nomor_tersedia);
-
-        // Menggunakan whereDoesntHave untuk filter user yang belum ada dalam antrian hari ini
-        $pasiens = User::where('role', 'User')
-            ->whereDoesntHave('pasiens', function ($query) use ($tanggal) {
-                $query->where('tanggal_antrian', $tanggal);
-            })
-            ->orderBy('created_at', 'DESC')
-            ->get();
-
-        return view('backend.pages.antri.create', compact('nomorWaktu', 'sisaAntrian', 'pasiens'));
-    }
+    // Pastikan $nextNomor dikirim ke view
+    return view('backend.pages.antri.create', compact('sisaAntrian', 'pasiens', 'nextNomor'));
+}
 
     /**
      * Store a newly created resource in storage.
@@ -69,27 +60,33 @@ class PasienController extends Controller
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'nomor_antrian' => [
-                'required',
-                'integer',
-                'between:1,' . $kuota_harian,
-                function ($attribute, $value, $fail) use ($tanggal) {
-                    $exists = Pasien::where('tanggal_antrian', $tanggal)->where('nomor_antrian', $value)->exists();
-                    if ($exists) {
-                        $fail("Nomor antrian $value sudah digunakan hari ini.");
-                    }
-                },
-            ],
         ]);
+
+        // Hitung nomor antrian berikutnya
+        $lastNomor = Pasien::where('tanggal_antrian', $tanggal)->max('nomor_antrian');
+        $nextNomor = $lastNomor ? $lastNomor + 1 : 1;
+
+        // Cek kuota
+        if ($nextNomor > $kuota_harian) {
+            return back()->withErrors(['nomor_antrian' => 'Kuota antrian hari ini sudah penuh.']);
+        }
+
+        // Cek user sudah daftar hari ini
+        $sudahDaftar = Pasien::where('user_id', $request->user_id)->where('tanggal_antrian', $tanggal)->exists();
+        if ($sudahDaftar) {
+            return back()->withErrors(['user_id' => 'User sudah terdaftar di antrian hari ini.']);
+        }
 
         // Simpan data pasien dengan nomor antrian & tanggal
         Pasien::create([
             'user_id' => $request->user_id,
-            'nomor_antrian' => $request->nomor_antrian,
+            'nomor_antrian' => $nextNomor,
             'tanggal_antrian' => $tanggal,
         ]);
 
-        return redirect()->route('antrian.index')->with('success', 'Pasien berhasil didaftarkan ke antrian.');
+        return redirect()
+            ->route('antrian.index')
+            ->with('success', 'Pasien berhasil didaftarkan ke antrian dengan nomor ' . $nextNomor . '.');
     }
 
     /**
@@ -135,20 +132,18 @@ class PasienController extends Controller
         try {
             // ✅ BENAR - Hapus Pasien, bukan User
             $pasien = Pasien::findOrFail($id);
-            
+
             // Cek apakah pasien memiliki data pemeriksaan terkait
             // if ($pasien->pemeriksaans()->exists()) {
             //     return back()->with('error', 'Tidak dapat menghapus pasien karena sudah memiliki data pemeriksaan.');
             // }
-            
+
             $userName = $pasien->user->name;
             $pasien->delete();
-            
+
             return back()->with('success', "Data pasien {$userName} berhasil dihapus dari antrian.");
-            
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menghapus data pasien: ' . $e->getMessage());
         }
     }
-
 }

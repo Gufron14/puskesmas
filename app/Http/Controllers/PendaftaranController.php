@@ -17,11 +17,10 @@ class PendaftaranController extends Controller
 
     public function getNomorAntrian(Request $request)
     {
-        // Validasi user login
         if (!Auth::check()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Silakan login terlebih dahulu'
+                'message' => 'Silakan login terlebih dahulu',
             ]);
         }
 
@@ -29,53 +28,47 @@ class PendaftaranController extends Controller
         $antrian = Antrian::first();
         $kuota_harian = $antrian ? $antrian->jumlah : 0;
 
-        // Validasi tanggal tidak boleh masa lalu
         if ($tanggal < now()->toDateString()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tanggal antrian tidak boleh masa lalu'
+                'message' => 'Tanggal antrian tidak boleh masa lalu',
             ]);
         }
 
-        // Cek apakah user sudah mendaftar pada tanggal tersebut
-        $userSudahDaftar = Pasien::where('user_id', Auth::id())
-            ->where('tanggal_antrian', $tanggal)
-            ->exists();
+        $userSudahDaftar = Pasien::where('user_id', Auth::id())->where('tanggal_antrian', $tanggal)->exists();
 
         if ($userSudahDaftar) {
             return response()->json([
                 'success' => false,
-                'message' => 'Anda sudah mendaftar antrian pada tanggal tersebut'
+                'message' => 'Anda sudah mendaftar antrian pada tanggal tersebut',
             ]);
         }
 
-        // Ambil nomor antrian yang sudah terpakai pada tanggal tersebut
-        $antrian_terpakai = Pasien::where('tanggal_antrian', $tanggal)
-            ->pluck('nomor_antrian')
-            ->toArray();
+        $antrian_terpakai = Pasien::where('tanggal_antrian', $tanggal)->pluck('nomor_antrian')->toArray();
 
-        // Hindari range invalid jika kuota 0
         $semua_nomor = $kuota_harian > 0 ? range(1, $kuota_harian) : [];
-
-        // Cari nomor yang masih tersedia
         $nomor_tersedia = array_diff($semua_nomor, $antrian_terpakai);
-
-        // Format sebagai array berisi ['nomor' => X]
-        $nomorWaktu = [];
-        foreach ($nomor_tersedia as $no) {
-            $nomorWaktu[] = [
-                'nomor' => $no
-            ];
-        }
-
         $sisaAntrian = count($nomor_tersedia);
+
+        // Nomor antrian berikutnya
+        $lastNomor = Pasien::where('tanggal_antrian', $tanggal)->max('nomor_antrian');
+        $nextNomor = $lastNomor ? $lastNomor + 1 : 1;
+
+        if ($nextNomor > $kuota_harian || $sisaAntrian <= 0) {
+            return response()->json([
+                'success' => true,
+                'nextNomor' => null,
+                'sisaAntrian' => 0,
+            ]);
+        }
 
         return response()->json([
             'success' => true,
-            'data' => $nomorWaktu,
-            'sisaAntrian' => $sisaAntrian
+            'nextNomor' => $nextNomor,
+            'sisaAntrian' => $sisaAntrian,
         ]);
     }
+
     public function store(Request $request)
     {
         $antrian = Antrian::first();
@@ -88,43 +81,30 @@ class PendaftaranController extends Controller
                 'date',
                 'after_or_equal:today',
                 function ($attribute, $value, $fail) use ($request) {
-                    // Cek apakah user sudah mendaftar pada tanggal tersebut
-                    $exists = Pasien::where('user_id', $request->user_id)
-                                    ->where('tanggal_antrian', $value)
-                                    ->exists();
+                    $exists = Pasien::where('user_id', $request->user_id)->where('tanggal_antrian', $value)->exists();
                     if ($exists) {
-                        $fail("Anda sudah mendaftar antrian pada tanggal tersebut.");
+                        $fail('Anda sudah mendaftar antrian pada tanggal tersebut.');
                     }
-                }
+                },
             ],
-            'nomor_antrian' => [
-                'required',
-                'integer',
-                'between:1,' . $kuota_harian,
-                function ($attribute, $value, $fail) use ($request) {
-                    $exists = Pasien::where('tanggal_antrian', $request->tanggal_antrian)
-                                    ->where('nomor_antrian', $value)
-                                    ->exists();
-                    if ($exists) {
-                        $fail("Nomor antrian $value sudah digunakan pada tanggal tersebut.");
-                    }
-                }
-            ],
-        ], [
-            'tanggal_antrian.required' => 'Tanggal antrian harus diisi',
-            'tanggal_antrian.date' => 'Format tanggal tidak valid',
-            'tanggal_antrian.after_or_equal' => 'Tanggal antrian tidak boleh masa lalu',
-            'nomor_antrian.required' => 'Nomor antrian harus dipilih',
-            'nomor_antrian.between' => 'Nomor antrian tidak valid',
         ]);
 
-        // Simpan data pasien dengan nomor antrian & tanggal
+        $tanggal = $request->tanggal_antrian;
+        $lastNomor = Pasien::where('tanggal_antrian', $tanggal)->max('nomor_antrian');
+        $nextNomor = $lastNomor ? $lastNomor + 1 : 1;
+
+        if ($nextNomor > $kuota_harian) {
+            return back()->withErrors(['nomor_antrian' => 'Kuota antrian hari ini sudah penuh.']);
+        }
+
         Pasien::create([
-            'user_id'         => $request->user_id,
-            'nomor_antrian'   => $request->nomor_antrian,
-            'tanggal_antrian' => $request->tanggal_antrian,
+            'user_id' => $request->user_id,
+            'nomor_antrian' => $nextNomor,
+            'tanggal_antrian' => $tanggal,
         ]);
 
-        return redirect()->route('daftar')->with('success', 'Berhasil didaftarkan ke antrian pada tanggal ' . \Carbon\Carbon::parse($request->tanggal_antrian)->translatedFormat('d F Y'));
+        return redirect()
+            ->route('daftar')
+            ->with('success', 'Berhasil didaftarkan ke antrian pada tanggal ' . \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') . ' dengan nomor antrian ' . $nextNomor);
     }
 }

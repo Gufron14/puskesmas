@@ -23,9 +23,9 @@
 
             <form action="{{ route('daftar.post') }}" method="POST">
                 @csrf
-                
+
                 {{-- Add hidden user_id field --}}
-                @if($user)
+                @if ($user)
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                 @endif
 
@@ -36,10 +36,9 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label for="noAntrian" class="form-label">Pilih No Antrian</label>
-                        <select name="nomor_antrian" id="noAntrian" class="form-control" required disabled>
-                            <option value="" selected disabled>-- Pilih tanggal terlebih dahulu --</option>
-                        </select>
+                        <label for="nomorAntrian" class="form-label">Nomor Antrian Anda</label>
+                        <input type="text" id="nomorAntrian" class="form-control" value="-" disabled>
+                        <input type="hidden" name="nomor_antrian" id="nomor_antrian_hidden">
                         <div class="form-text" id="sisaAntrianInfo">
                             <span class="text-muted">Silakan pilih tanggal terlebih dahulu</span>
                         </div>
@@ -81,7 +80,8 @@
                     <div class="col-md-3 mb-3">
                         <label for="telepon" class="form-label">Telepon</label>
                         <input type="text" class="form-control" name="telepon"
-                            value="{{ old('telepon', optional($user)->telepon) }}" placeholder="Contoh: 081234567890" disabled>
+                            value="{{ old('telepon', optional($user)->telepon) }}" placeholder="Contoh: 081234567890"
+                            disabled>
                     </div>
                 </div>
 
@@ -91,10 +91,11 @@
                 </div>
 
                 @if ($antrian && $antrian->status === 'on')
-                    @if($user)
+                    @if ($user)
                         <button type="submit" class="btn btn-success">Simpan</button>
                     @else
-                        <button type="button" class="btn btn-warning" onclick="showLoginWarning()">Login untuk Mendaftar</button>
+                        <button type="button" class="btn btn-warning" onclick="showLoginWarning()">Login untuk
+                            Mendaftar</button>
                     @endif
                 @else
                     <button type="button" class="btn btn-secondary" onclick="showAntrianTutup()">Antrian Ditutup</button>
@@ -179,21 +180,21 @@
         });
 
         function loadNomorAntrian(tanggal) {
-            const selectAntrian = $('#noAntrian');
+            const nomorAntrianInput = $('#nomorAntrian');
+            const nomorAntrianHidden = $('#nomor_antrian_hidden');
             const sisaAntrianInfo = $('#sisaAntrianInfo');
 
             @if (!$user)
-                // Jika user belum login, tampilkan pesan dan jangan lakukan AJAX
-                selectAntrian.html('<option value="" disabled>Silakan login terlebih dahulu</option>');
+                nomorAntrianInput.val('-');
+                nomorAntrianHidden.val('');
                 sisaAntrianInfo.html('<span class="text-warning">Silakan login untuk melihat antrian</span>');
                 return;
             @endif
 
-            // Reset dropdown
-            selectAntrian.prop('disabled', true).html('<option value="">Loading...</option>');
+            nomorAntrianInput.val('Loading...');
+            nomorAntrianHidden.val('');
             sisaAntrianInfo.html('<span class="text-muted">Loading...</span>');
 
-            // AJAX request
             $.ajax({
                 url: '{{ route('get.nomor.antrian') }}',
                 method: 'POST',
@@ -203,60 +204,41 @@
                 },
                 success: function(response) {
                     if (response.success) {
-                        selectAntrian.html(
-                            '<option value="" selected disabled>-- Pilih Nomor Antrian --</option>');
+                        if (response.nextNomor) {
+                            nomorAntrianInput.val(response.nextNomor);
+                            nomorAntrianHidden.val(response.nextNomor);
 
-                        if (response.data.length > 0) {
-                            response.data.forEach(function(item) {
-                                selectAntrian.append(
-                                    `<option value="${item.nomor}">Antrian Nomor ${item.nomor}</option>`
+                            // Cek apakah tanggal yang dipilih adalah hari ini
+                            const today = new Date();
+                            const selectedDate = new Date(tanggal);
+                            if (
+                                selectedDate.getFullYear() === today.getFullYear() &&
+                                selectedDate.getMonth() === today.getMonth() &&
+                                selectedDate.getDate() === today.getDate()
+                            ) {
+                                sisaAntrianInfo.html(
+                                    `<span class="text-success">Sisa antrian: ${response.sisaAntrian}</span>`
                                     );
-                            });
-                            selectAntrian.prop('disabled', false);
-                            sisaAntrianInfo.html(
-                                `<span class="text-success">Sisa antrian: ${response.sisaAntrian}</span>`);
+                            } else {
+                                sisaAntrianInfo.html(
+                                    `<span class="text-muted">Sisa antrian akan tersedia pada hari H</span>`
+                                    );
+                            }
                         } else {
-                            selectAntrian.html('<option value="" disabled>Maaf, kuota antrian penuh</option>');
-                            sisaAntrianInfo.html(
-                                '<span class="text-danger">Tidak ada sisa antrian untuk tanggal ini</span>');
+                            nomorAntrianInput.val('-');
+                            nomorAntrianHidden.val('');
+                            sisaAntrianInfo.html('<span class="text-danger">Kuota antrian penuh</span>');
                         }
                     } else {
-                        selectAntrian.html('<option value="" disabled>Tidak dapat memuat antrian</option>');
+                        nomorAntrianInput.val('-');
+                        nomorAntrianHidden.val('');
                         sisaAntrianInfo.html(`<span class="text-danger">${response.message}</span>`);
-
-                        // Show error message
-                        if (response.message.includes('login')) {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Login Diperlukan',
-                                text: response.message,
-                                confirmButtonText: 'Login',
-                                confirmButtonColor: '#007bff'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    window.location.href = "{{ route('login') }}";
-                                }
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: response.message,
-                                confirmButtonColor: '#dc3545'
-                            });
-                        }
                     }
                 },
-                error: function(xhr) {
-                    selectAntrian.html('<option value="" disabled>Error memuat data</option>');
+                error: function() {
+                    nomorAntrianInput.val('-');
+                    nomorAntrianHidden.val('');
                     sisaAntrianInfo.html('<span class="text-danger">Terjadi kesalahan</span>');
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Terjadi kesalahan saat memuat data antrian',
-                        confirmButtonColor: '#dc3545'
-                    });
                 }
             });
         }

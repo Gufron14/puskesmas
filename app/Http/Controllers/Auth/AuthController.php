@@ -90,7 +90,7 @@ class AuthController extends Controller
             $user = Auth::user();
             $role = strtolower($user->role);
 
-            if ($role === 'admin' || $role === 'mantri') {
+            if ($role === 'admin' || $role === 'mantri' || $role === 'puskesmas induk') {
                 return redirect()->intended('/dashboard');
             } else {
                 return redirect()->intended('/'); // atau '/' jika itu halaman user

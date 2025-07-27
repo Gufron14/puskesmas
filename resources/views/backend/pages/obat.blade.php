@@ -18,26 +18,14 @@
             </div>
         @endif
 
-        {{-- Filter Search --}}
-        {{-- <div class="row mb-4">
-            <div class="col-md-4">
-                <form action="{{ route('obat.index') }}" method="GET">
-                    <div class="input-group">
-                        <input type="text" class="form-control" name="search" placeholder="Cari Obat">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" type="submit">Cari</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div> --}}
-
         <div class="card shadow mb-4">
             <div class="card-header py-3 d-flex justify-content-between align-items-center">
                 <h6 class="m-0 font-weight-bold text-primary">Data Obat</h6>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createObatModal">
-                    <i class="fe fe-plus"></i> Tambah Obat
-                </button>
+                @if (auth()->check() && auth()->user()->role == 'Mantri')
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createObatModal">
+                        <i class="fe fe-plus"></i> Tambah Obat
+                    </button>
+                @endif
             </div>
             <div class="card-body">
                 <div class="table-responsive">
@@ -46,10 +34,13 @@
                             <tr>
                                 <th>No</th>
                                 <th>Nama Obat</th>
+                                <th>Jenis Obat</th>
                                 <th>Harga</th>
                                 <th>Stok</th>
                                 <th>Deskripsi</th>
-                                <th>Aksi</th>
+                                @if (auth()->check() && auth()->user()->role == 'Mantri')
+                                    <th>Aksi</th>
+                                @endif
                             </tr>
                         </thead>
                         <tbody>
@@ -57,18 +48,25 @@
                                 <tr id="obat-row-{{ $obat->id }}">
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $obat->nama }}</td>
+                                    <td>{{ $obat->jenisObat->jenis_obat ?? '-' }}</td>
                                     <td>Rp{{ number_format($obat->harga, 0, ',', '.') }}</td>
                                     <td>{{ $obat->stok }}</td>
                                     <td>{{ $obat->deskripsi ?? '-' }}</td>
-                                    <td>
-                                        <button class="btn btn-primary btn-sm" onclick="editObat({{ $obat->id }}, '{{ $obat->nama }}', {{ $obat->harga }}, {{ $obat->stok }}, '{{ $obat->deskripsi }}')">
-                                            <i class="fe fe-edit fe-16"></i>
-                                        </button>
-                                        {{-- Button Hapus --}}
-                                        <button class="btn btn-danger btn-sm" onclick="deleteObat({{ $obat->id }})">
-                                            <i class="fe fe-trash fe-16"></i>
-                                        </button>
-                                    </td>
+                                    @if (auth()->check() && auth()->user()->role == 'Mantri')
+                                        <td>
+                                            <div class="btn-group">
+                                                <button class="btn btn-primary btn-sm"
+                                                    onclick="editObat({{ $obat->id }}, '{{ $obat->nama }}', {{ $obat->harga }}, {{ $obat->stok }}, '{{ $obat->deskripsi }}', {{ $obat->jenis_obat_id }})">
+                                                    <i class="fe fe-edit fe-16"></i>
+                                                </button>
+                                                {{-- Button Hapus --}}
+                                                <button class="btn btn-danger btn-sm"
+                                                    onclick="deleteObat({{ $obat->id }})">
+                                                    <i class="fe fe-trash fe-16"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    @endif
                                 </tr>
                             @endforeach
                         </tbody>
@@ -92,6 +90,15 @@
                 <form id="createObatForm" action="{{ route('obat.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
+                        <div class="form-group">
+                            <label for="create_jenis_obat_id">Jenis Obat <span class="text-danger">*</span></label>
+                            <select class="form-control" id="create_jenis_obat_id" name="jenis_obat_id" required>
+                                <option value="">-- Pilih Jenis Obat --</option>
+                                @foreach ($jenis_obats as $jenis)
+                                    <option value="{{ $jenis->id }}">{{ $jenis->jenis_obat }}</option>
+                                @endforeach
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label for="create_nama">Nama Obat <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="create_nama" name="nama" required>
@@ -137,6 +144,25 @@
                     <input type="hidden" id="edit_obat_id" name="obat_id">
                     <div class="modal-body">
                         <div class="form-group">
+                            <label for="edit_jenis_obat_id">Jenis Obat <span class="text-danger">*</span></label>
+<select class="form-control" id="edit_jenis_obat_id" name="jenis_obat_id" required>
+    <option value="">-- Pilih Jenis Obat --</option>
+    @foreach ($jenis_obats as $jenis)
+        <option value="{{ $jenis->id }}"
+            @if (old('jenis_obat_id') !== null)
+                {{ old('jenis_obat_id') == $jenis->id ? 'selected' : '' }}
+            @elseif (!empty($obat) && $obat->jenis_obat_id == $jenis->id)
+                selected
+            @endif
+        >
+            {{ $jenis->jenis_obat }}
+        </option>
+    @endforeach
+</select>
+
+
+                        </div>
+                        <div class="form-group">
                             <label for="edit_nama">Nama Obat <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" id="edit_nama" name="nama" required>
                         </div>
@@ -165,8 +191,14 @@
 
     {{-- Scripts --}}
     <script>
-        function editObat(id) {
-            window.location.href = `/obat/${id}/edit`;
+        function editObat(id, nama, harga, stok, deskripsi, jenis_obat_id) {
+            $('#editObatForm').attr('action', `/obat/${id}`);
+            $('#edit_nama').val(nama);
+            $('#edit_harga').val(harga);
+            $('#edit_stok').val(stok);
+            $('#edit_deskripsi').val(deskripsi || '');
+            $('#edit_jenis_obat_id').val(jenis_obat_id);
+            $('#editObatModal').modal('show');
         }
 
         function deleteObat(id) {
