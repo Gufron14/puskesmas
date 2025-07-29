@@ -60,7 +60,7 @@
                     <div class="form-group mb-4">
                         <label for="waktu_pemeriksaan">Waktu Pemeriksaan <span class="text-danger">*</span></label>
                         <input type="datetime-local" id="waktu_pemeriksaan" name="waktu_pemeriksaan" class="form-control"
-                            value="{{ old('waktu_pemeriksaan', now()->format('Y-m-d\TH:i')) }}" required>
+                            value="{{ old('waktu_pemeriksaan', now()->format('Y-m-d\TH:i')) }}" readonly>
                     </div>
                 </div>
             </div>
@@ -69,23 +69,23 @@
                 <div class="col-md-4">
                     <label for="suhu" class="form-label">Suhu Tubuh (°C) <span class="text-danger">*</span></label>
                     <input type="number" name="suhu" class="form-control" id="suhu" min="30" max="45"
-                        step="0.1" placeholder="36.5" required value="{{ old('suhu') }}">
+                        step="0.1" value="36.5" required value="{{ old('suhu') }}">
                 </div>
                 <div class="col-md-4">
                     <label for="tensi_darah" class="form-label">Tensi Darah <span class="text-danger">*</span></label>
                     <div class="d-flex align-items-center" style="gap: 5px;">
                         <input type="number" id="sistolik" name="sistolik" class="form-control" min="50"
-                            max="300" placeholder="Sistolik" required value="{{ old('sistolik') }}">
+                            max="300" value="50" required value="{{ old('sistolik') }}">
                         <span>/</span>
                         <input type="number" id="diastolik" name="diastolik" class="form-control" min="30"
-                            max="200" placeholder="Diastolik" required value="{{ old('diastolik') }}">
+                            max="200" value="30" required value="{{ old('diastolik') }}">
                     </div>
                 </div>
 
                 <div class="col-md-4">
                     <label for="biaya" class="form-label">Biaya Pemeriksaan <span class="text-danger">*</span></label>
                     <input type="number" name="biaya" class="form-control" id="biaya" min="0"
-                        placeholder="50000" required value="{{ old('biaya') }}">
+                        value="10000" required value="{{ old('biaya') }}">
                 </div>
             </div>
 

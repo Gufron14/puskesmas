@@ -54,7 +54,7 @@
                     <div class="form-group mb-4">
                         <label for="waktu_pemeriksaan">Waktu Pemeriksaan <span class="text-danger">*</span></label>
                         <input type="datetime-local" id="waktu_pemeriksaan" name="waktu_pemeriksaan" class="form-control"
-                            value="{{ old('waktu_pemeriksaan', $pemeriksaan->waktu_pemeriksaan ? \Carbon\Carbon::parse($pemeriksaan->waktu_pemeriksaan)->format('Y-m-d\TH:i') : '') }}" required>
+                            value="{{ old('waktu_pemeriksaan', $pemeriksaan->waktu_pemeriksaan ? \Carbon\Carbon::parse($pemeriksaan->waktu_pemeriksaan)->format('Y-m-d\TH:i') : '') }}" readonly>
                     </div>
                 </div>
             </div>

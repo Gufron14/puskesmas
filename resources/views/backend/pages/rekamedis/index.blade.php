@@ -82,6 +82,7 @@
                                             <a href="{{ route('rekamedis.edit', $item->id) }}"
                                                 class="btn btn-primary btn-sm text-white">
                                                 <i class="fe fe-edit"></i> Edit
+                                            </a>
                                         @endif
                                         <button type="button" class="btn btn-success btn-sm dropdown-toggle"
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

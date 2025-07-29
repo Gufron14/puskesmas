@@ -54,14 +54,7 @@
                                                 <ul class="list-unstyled mb-0">
                                                     @foreach ($resep as $r)
                                                         <li>
-                                                            <strong>{{ $r['nama_obat'] ?? '-' }}</strong> -
-                                                            {{ $r['jumlah'] ?? 0 }} pcs ×
-                                                            Rp{{ number_format($r['harga'] ?? 0, 0, ',', '.') }}<br>
-                                                            <small>
-                                                                <span class="badge bg-{{ ($r['keterangan_makan'] ?? '') == 'sesudah_makan' ? 'success' : 'warning' }}">
-                                                                    {{ $r['keterangan_display'] ?? ucwords(str_replace('_', ' ', $r['keterangan_makan'] ?? '-')) }}
-                                                                </span>
-                                                            </small>
+                                                            <strong>{{ $r['nama_obat'] ?? '-' }}</strong>
                                                         </li>
                                                     @endforeach
                                                 </ul>
