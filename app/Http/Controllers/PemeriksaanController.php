@@ -97,7 +97,7 @@ class PemeriksaanController extends Controller
             'resep' => 'required|array|min:1',
             'resep.*.nama_obat' => 'required|exists:obats,id',
             'resep.*.jenis_obat' => 'required|exists:jenis_obats,id',
-            'resep.*.keterangan_makan' => 'required|in:sesudah_makan,sebelum_makan',
+            'resep.*.keterangan_makan' => 'required',
             'resep.*.jumlah' => 'required|numeric|min:1',
         ]);
     

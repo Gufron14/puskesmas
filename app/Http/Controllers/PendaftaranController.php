@@ -50,17 +50,16 @@ class PendaftaranController extends Controller
         $nomor_tersedia = array_diff($semua_nomor, $antrian_terpakai);
         $sisaAntrian = count($nomor_tersedia);
 
-        // Nomor antrian berikutnya
-        $lastNomor = Pasien::where('tanggal_antrian', $tanggal)->max('nomor_antrian');
-        $nextNomor = $lastNomor ? $lastNomor + 1 : 1;
-
-        if ($nextNomor > $kuota_harian || $sisaAntrian <= 0) {
+        // Nomor antrian berikutnya adalah nomor terkecil yang tersedia
+        if ($sisaAntrian <= 0) {
             return response()->json([
                 'success' => true,
                 'nextNomor' => null,
                 'sisaAntrian' => 0,
             ]);
         }
+
+        $nextNomor = min($nomor_tersedia);
 
         return response()->json([
             'success' => true,

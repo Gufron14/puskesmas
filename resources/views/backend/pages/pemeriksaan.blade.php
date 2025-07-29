@@ -50,7 +50,8 @@
                             @foreach ($pasiens->where('status', 'menunggu') as $pasien)
                                 <option value="{{ $pasien->user->id }}"
                                     {{ old('user_id') == $pasien->user->id ? 'selected' : '' }}>
-                                    {{ $pasien->user->name }} - {{ $pasien->user->nik }}
+                                    Antrian {{ $pasien->nomor_antrian }} - {{ $pasien->user->name }}
+                                    {{-- - {{ $pasien->user->nik }} --}}
                                 </option>
                             @endforeach
                         </select>
@@ -177,7 +178,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <label>Aturan Minum <span class="text-danger">*</span></label>
-                                        <select name="resep[{{ $index }}][keterangan_makan]" class="form-control"
+                                        {{-- <select name="resep[{{ $index }}][keterangan_makan]" class="form-control"
                                             required>
                                             <option value="">-- Pilih --</option>
                                             <option value="sebelum_makan"
@@ -186,7 +187,8 @@
                                             <option value="sesudah_makan"
                                                 {{ ($resep['keterangan_makan'] ?? '') == 'sesudah_makan' ? 'selected' : '' }}>
                                                 Sesudah Makan</option>
-                                        </select>
+                                        </select> --}}
+                                        <input type="text" name="resep[{{ $index }}][keterangan_makan]" class="form-control">
                                     </div>
                                     <div class="col-md-2">
                                         <label>Jumlah <span class="text-danger">*</span></label>
@@ -452,11 +454,7 @@
                 </div>
                 <div class="col-md-2">
                     <label>Aturan Minum <span class="text-danger">*</span></label>
-                    <select name="resep[${resepIndex}][keterangan_makan]" class="form-control" required>
-                        <option value="">-- Pilih --</option>
-                        <option value="sebelum_makan">Sebelum Makan</option>
-                        <option value="sesudah_makan">Sesudah Makan</option>
-                    </select>
+                    <input type="text" name="resep[${resepIndex}][keterangan_makan]" class="form-control">
                 </div>
                 <div class="col-md-1">
                     <label>Jumlah <span class="text-danger">*</span></label>
