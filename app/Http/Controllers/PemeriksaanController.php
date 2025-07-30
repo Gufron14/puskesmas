@@ -179,8 +179,6 @@ public function store(Request $request)
             'total_biaya' => $totalBiaya,
         ]);
 
-        dd($request->input('resep'));
-
         // Update status pasien
         $pasien = Pasien::where('user_id', $request->user_id)->first();
         if ($pasien) {
