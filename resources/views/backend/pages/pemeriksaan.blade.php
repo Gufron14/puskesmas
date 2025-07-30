@@ -142,7 +142,7 @@
                         @foreach ($oldResep as $index => $resep)
                             <div class="resep-item mb-3" data-index="{{ $index }}">
                                 <div class="row">
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <label>Jenis Obat <span class="text-danger">*</span></label>
                                         <select name="resep[{{ $index }}][jenis_obat]" class="form-control"
                                             required>
@@ -155,28 +155,29 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <label>Nama Obat <span class="text-danger">*</span></label>
                                         <select name="resep[{{ $index }}][nama_obat]" class="form-control"
                                             required>
                                             <option value="">-- Pilih Obat --</option>
-                                            @foreach ($obats as $obat)
-                                                <option value="{{ $obat->id }}" data-harga="{{ $obat->harga }}"
-                                                    data-stok="{{ $obat->stok }}"
-                                                    {{ ($resep['nama_obat'] ?? '') == $obat->id ? 'selected' : '' }}>
-                                                    {{ $obat->nama }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+@foreach ($obats as $obat)
+    <option value="{{ $obat->id }}" 
+        data-harga="{{ $obat->harga }}" 
+        data-stok="{{ $obat->stok }}" 
+        data-jenis="{{ $obat->jenis_obat_id }}"
+        {{ ($resep['nama_obat'] ?? '') == $obat->id ? 'selected' : '' }}>
+        {{ $obat->nama }}
+    </option>
+@endforeach
 
-                                    <div class="col-md-2">
-                                        <label>Harga Satuan</label>
-                                        <input type="text" class="form-control harga-obat" readonly
-                                            value="@if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat'])) {{ 'Rp' . number_format($obats->find($resep['nama_obat'])->harga, 0, ',', '.') }} @endif"
-                                            placeholder="Pilih obat dulu">
+                                        </select>
+                                        <small class="text-info stok-info">
+                                            @if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat']))
+                                                Stok: {{ $obats->find($resep['nama_obat'])->stok }}
+                                            @endif
+                                        </small>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col">
                                         <label>Aturan Minum <span class="text-danger">*</span></label>
                                         {{-- <select name="resep[{{ $index }}][keterangan_makan]" class="form-control"
                                             required>
@@ -190,23 +191,43 @@
                                         </select> --}}
                                         <input type="text" name="resep[{{ $index }}][keterangan_makan]" class="form-control">
                                     </div>
-                                    <div class="col-md-2">
-                                        <label>Jumlah <span class="text-danger">*</span></label>
-                                        <input type="number" name="resep[{{ $index }}][jumlah]"
-                                            class="form-control" min="1" value="{{ $resep['jumlah'] ?? 1 }}"
-                                            required>
-                                    </div>
-                                    <div class="col-md-2">
+<div class="col">
+    <label>Jumlah <span class="text-danger">*</span></label>
+    <div class="input-group">
+        <input type="number" name="resep[{{ $index }}][jumlah]"
+            class="form-control jumlah-input" min="1" value="{{ $resep['jumlah'] ?? 1 }}" required>
+        <input type="text" class="form-control satuan-obat" value="@php
+            $jenisNama = '';
+            if (!empty($resep['jenis_obat']) && $jenis = $jenisObats->firstWhere('id', $resep['jenis_obat'])) {
+                $jenisNama = $jenis->jenis_obat;
+            }
+            echo match ($jenisNama) {
+                'Serbuk' => 'Kantong',
+                'Kapsul' => 'Kapsul',
+                'Tablet' => 'Tablet',
+                'Sirup', 'Obat Tetes' => 'Botol',
+                'Salep' => 'Pcs',
+                default => '',
+            };
+        @endphp" readonly>
+    </div>
+</div>
+
+                                    {{-- <div class="col-md-2">
+                                        <label>Harga Satuan</label>
+
+                                    </div> --}}
+                                    <input type="hidden" class="form-control harga-obat" readonly
+                                            value="@if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat'])) {{ 'Rp' . number_format($obats->find($resep['nama_obat'])->harga, 0, ',', '.') }} @endif"
+                                            placeholder="Pilih obat dulu">
+                                    {{-- <div class="col-md-2">
                                         <label>Subtotal</label>
-                                        <input type="text" class="form-control subtotal-obat" readonly
+
+                                    </div> --}}
+                                    <input type="hidden" class="form-control subtotal-obat" readonly
                                             value="@if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat'])) {{ 'Rp' . number_format($obats->find($resep['nama_obat'])->harga * ($resep['jumlah'] ?? 1), 0, ',', '.') }} @endif"
                                             placeholder="Rp 0">
-                                        <small class="text-info stok-info">
-                                            @if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat']))
-                                                Stok: {{ $obats->find($resep['nama_obat'])->stok }}
-                                            @endif
-                                        </small>
-                                    </div>
+
                                     <div class="col-md-1">
                                         <label>&nbsp;</label>
                                         @if ($index > 0)
@@ -317,6 +338,43 @@
                 return parseInt(str.toString().replace(/[^0-9]/g, '')) || 0;
             }
 
+            document.addEventListener('change', function(e) {
+    if (e.target.matches('select[name*="jenis_obat"]')) {
+        const resepItem = e.target.closest('.resep-item');
+        const jenisId = e.target.value;
+        const namaObatSelect = resepItem.querySelector('select[name*="nama_obat"]');
+        const stokInfo = resepItem.querySelector('.stok-info');
+        const hargaInput = resepItem.querySelector('.harga-obat');
+        const subtotalInput = resepItem.querySelector('.subtotal-obat');
+        const jumlahInput = resepItem.querySelector('input[name*="jumlah"]');
+
+        // Reset nilai dropdown nama obat
+        namaObatSelect.innerHTML = '<option value="">-- Pilih Obat --</option>';
+
+        // Tambahkan opsi yang sesuai dengan jenis obat
+        Object.values(obatData).forEach(obat => {
+            if (obat.jenis_obat_id == jenisId) {
+                const option = document.createElement('option');
+                option.value = obat.id;
+                option.textContent = obat.nama;
+                option.dataset.harga = obat.harga;
+                option.dataset.stok = obat.stok;
+                namaObatSelect.appendChild(option);
+            }
+        });
+
+        // Reset info lainnya
+        stokInfo.textContent = '';
+        hargaInput.value = '';
+        subtotalInput.value = '';
+        jumlahInput.value = 1;
+        jumlahInput.removeAttribute('max');
+
+        updateTotalBiaya();
+    }
+});
+
+
             // Update total biaya keseluruhan
             function updateTotalBiaya() {
                 let totalObat = 0;
@@ -387,6 +445,38 @@
                 }
             });
 
+            function getSatuanFromJenis(namaJenis) {
+    switch (namaJenis) {
+        case 'Serbuk': return 'Kantong';
+        case 'Kapsul': return 'Kapsul';
+        case 'Tablet': return 'Tablet';
+        case 'Sirup':
+        case 'Obat Tetes': return 'Botol';
+        case 'Salep': return 'Pcs';
+        default: return '';
+    }
+}
+
+// Saat jenis obat dipilih
+document.addEventListener('change', function(e) {
+    if (e.target.matches('select[name*="jenis_obat"]')) {
+        const resepItem = e.target.closest('.resep-item');
+        const jenisSelect = e.target;
+        const jenisId = jenisSelect.value;
+        const satuanInput = resepItem.querySelector('.satuan-obat');
+
+        // Ambil nama jenis dari opsi terpilih
+        const selectedOption = jenisSelect.options[jenisSelect.selectedIndex];
+        const namaJenis = selectedOption.textContent.trim();
+
+        // Set satuan berdasarkan jenis
+        satuanInput.value = getSatuanFromJenis(namaJenis);
+
+        // (jangan lupa: filter nama obat juga di bagian ini kalau kamu pakai filtering)
+    }
+});
+
+
             // Event listener untuk perubahan jumlah
             document.addEventListener('input', function(e) {
                 if (e.target.matches('input[name*="jumlah"]')) {
@@ -436,36 +526,87 @@
                 const newResepHtml = `
         <div class="resep-item mb-3" data-index="${resepIndex}">
             <div class="row">
-                            <div class="col-md-2">
-                    <label>Jenis Obat <span class="text-danger">*</span></label>
-                    <select name="resep[${resepIndex}][jenis_obat]" class="form-control" required>
-                        ${jenisOptionsHtml}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label>Nama Obat <span class="text-danger">*</span></label>
-                    <select name="resep[${resepIndex}][nama_obat]" class="form-control" required>
-                        ${optionsHtml}
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label>Harga Satuan</label>
-                    <input type="text" class="form-control harga-obat" readonly placeholder="Pilih obat dulu">
-                </div>
-                <div class="col-md-2">
-                    <label>Aturan Minum <span class="text-danger">*</span></label>
-                    <input type="text" name="resep[${resepIndex}][keterangan_makan]" class="form-control">
-                </div>
-                <div class="col-md-1">
-                    <label>Jumlah <span class="text-danger">*</span></label>
-                    <input type="number" name="resep[${resepIndex}][jumlah]" class="form-control" 
-                           min="1" value="1" required>
-                </div>
-                <div class="col-md-2">
-                    <label>Subtotal</label>
-                    <input type="text" class="form-control subtotal-obat" readonly placeholder="Rp 0">
-                    <small class="text-info stok-info"></small>
-                </div>
+                                    <div class="col">
+                                        <label>Jenis Obat <span class="text-danger">*</span></label>
+                                        <select name="resep[{{ $index }}][jenis_obat]" class="form-control"
+                                            required>
+                                            <option value="">-- Pilih Jenis --</option>
+                                            @foreach ($jenisObats as $jenis)
+                                                <option value="{{ $jenis->id }}"
+                                                    {{ ($resep['jenis_obat'] ?? '') == $jenis->id ? 'selected' : '' }}>
+                                                    {{ $jenis->jenis_obat }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <label>Nama Obat <span class="text-danger">*</span></label>
+                                        <select name="resep[{{ $index }}][nama_obat]" class="form-control"
+                                            required>
+                                            <option value="">-- Pilih Obat --</option>
+                                            @foreach ($obats as $obat)
+                                                <option value="{{ $obat->id }}" data-harga="{{ $obat->harga }}"
+                                                    data-stok="{{ $obat->stok }}"
+                                                    {{ ($resep['nama_obat'] ?? '') == $obat->id ? 'selected' : '' }}>
+                                                    {{ $obat->nama }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-info stok-info">
+                                            @if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat']))
+                                                Stok: {{ $obats->find($resep['nama_obat'])->stok }}
+                                            @endif
+                                        </small>
+                                    </div>
+                                    <div class="col">
+                                        <label>Aturan Minum <span class="text-danger">*</span></label>
+                                        {{-- <select name="resep[{{ $index }}][keterangan_makan]" class="form-control"
+                                            required>
+                                            <option value="">-- Pilih --</option>
+                                            <option value="sebelum_makan"
+                                                {{ ($resep['keterangan_makan'] ?? '') == 'sebelum_makan' ? 'selected' : '' }}>
+                                                Sebelum Makan</option>
+                                            <option value="sesudah_makan"
+                                                {{ ($resep['keterangan_makan'] ?? '') == 'sesudah_makan' ? 'selected' : '' }}>
+                                                Sesudah Makan</option>
+                                        </select> --}}
+                                        <input type="text" name="resep[{{ $index }}][keterangan_makan]" class="form-control">
+                                    </div>
+<div class="col">
+    <label>Jumlah <span class="text-danger">*</span></label>
+    <div class="input-group">
+        <input type="number" name="resep[{{ $index }}][jumlah]"
+            class="form-control jumlah-input" min="1" value="{{ $resep['jumlah'] ?? 1 }}" required>
+        <input type="text" class="form-control satuan-obat" value="@php
+            $jenisNama = '';
+            if (!empty($resep['jenis_obat']) && $jenis = $jenisObats->firstWhere('id', $resep['jenis_obat'])) {
+                $jenisNama = $jenis->jenis_obat;
+            }
+            echo match ($jenisNama) {
+                'Serbuk' => 'Kantong',
+                'Kapsul' => 'Kapsul',
+                'Tablet' => 'Tablet',
+                'Sirup', 'Obat Tetes' => 'Botol',
+                'Salep' => 'Pcs',
+                default => '',
+            };
+        @endphp" readonly>
+    </div>
+</div>
+                                    {{-- <div class="col-md-2">
+                                        <label>Harga Satuan</label>
+
+                                    </div> --}}
+                                    <input type="hidden" class="form-control harga-obat" readonly
+                                            value="@if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat'])) {{ 'Rp' . number_format($obats->find($resep['nama_obat'])->harga, 0, ',', '.') }} @endif"
+                                            placeholder="Pilih obat dulu">
+                                    {{-- <div class="col-md-2">
+                                        <label>Subtotal</label>
+
+                                    </div> --}}
+                                    <input type="hidden" class="form-control subtotal-obat" readonly
+                                            value="@if (isset($resep['nama_obat']) && $resep['nama_obat'] && $obats->find($resep['nama_obat'])) {{ 'Rp' . number_format($obats->find($resep['nama_obat'])->harga * ($resep['jumlah'] ?? 1), 0, ',', '.') }} @endif"
+                                            placeholder="Rp 0">
                 <div class="col-md-1">
                     <label>&nbsp;</label>
                     <button type="button" class="btn btn-danger btn-sm btn-remove-resep d-block">

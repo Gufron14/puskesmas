@@ -142,11 +142,23 @@
                             <tr>
                                 <td><strong>{{ $r['nama_obat'] ?? ($r['nama'] ?? '-') }}</strong></td>
                                 <td><span class="badge badge-secondary">{{ $r['jenis_obat'] ?? 'Tidak Diketahui' }}</span></td>
-                                <td><span class="badge badge-primary">{{ $r['jumlah'] ?? 0 }} pcs</span></td>
+                                <td><span class="badge badge-primary">{{ $r['jumlah'] ?? 0 }} 
+                                    @if ($r['jenis_obat'] == 'Serbuk')
+                                        Kantong
+                                    @elseif ($r['jenis_obat'] == 'Kapsul')
+                                        Kapsul
+                                    @elseif ($r['jenis_obat'] == 'Tablet')
+                                        Tablet
+                                    @elseif ($r['jenis_obat'] == 'Sirup' || $r['jenis_obat'] == 'Obat Tetes')
+                                        Botol
+                                    @elseif ($r['jenis_obat'] == 'Salep')
+                                        Pcs
+                                    @endif    
+                                </span></td>
                                 {{-- <td>Rp{{ number_format($r['harga'] ?? 0, 0, ',', '.') }}</td> --}}
                                 <td>
-                                    <span class="badge badge-{{ ($r['keterangan_makan'] ?? '') == 'sesudah_makan' ? 'success' : 'warning' }}">
-                                        {{ $r['keterangan_display'] ?? ucwords(str_replace('_', ' ', $r['keterangan_makan'] ?? '-')) }}
+                                    <span>
+                                        {{ $r['keterangan_makan'] }}
                                     </span>
                                 </td>
                                 {{-- <td><strong>Rp{{ number_format(($r['jumlah'] ?? 0) * ($r['harga'] ?? 0), 0, ',', '.') }}</strong></td> --}}
