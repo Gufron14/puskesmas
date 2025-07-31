@@ -76,6 +76,9 @@
                 <th width="20%">Nama Pasien</th>
                 <th width="10%">Suhu</th>
                 <th width="15%">Tensi</th>
+                <th width="15%">Keluhan</th>
+                <th width="15%">Diagnosa</th>
+                <th width="15%">Catatan Dokter</th>
                 <th width="20%">Resep Obat</th>
                 <th width="15%">Tanggal</th>
                 {{-- <th width="15%">Total Bayar</th> --}}
@@ -94,6 +97,9 @@
                     <td>{{ $item->user->name ?? '-' }}</td>
                     <td class="text-center">{{ $item->suhu }}°C</td>
                     <td class="text-center">{{ $item->tensi_sistolik }}/{{ $item->tensi_diastolik }} mmHg</td>
+                    <td>{{ $item->gejala }}</td>
+                    <td>{{ $item->diagnosa }}</td>
+                    <td>{{ $item->catatan_dokter }}</td>
                     <td>
                         @if (count($item->resep_formatted))
                             @foreach ($item->resep_formatted as $r)
