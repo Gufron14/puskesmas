@@ -96,11 +96,11 @@
 <table>
     <thead>
         <tr>
+            <th>Tanggal Periksa</th>
             <th>Nama</th>
+            <th>Keluhan</th>
             <th>Suhu (°C)</th>
             <th>Tensi (mmHg)</th>
-            <th>Tanggal Periksa</th>
-            <th>Keluhan</th>
             <th>Diagnosa</th>
             <th>Catatan Dokter</th>
             <th>Resep Obat</th>
@@ -109,11 +109,11 @@
     </thead>
     <tbody>
         <tr>
-            <td>{{ $pemeriksaan->user->name ?? '-' }}</td>
-            <td>{{ $pemeriksaan->suhu }}</td>
-            <td>{{ $pemeriksaan->tensi_sistolik }} / {{ $pemeriksaan->tensi_diastolik }}</td>
             <td>{{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->translatedFormat('d M Y') }}</td>
+            <td>{{ $pemeriksaan->user->name ?? '-' }}</td>
             <td>{{ $pemeriksaan->gejala }}</td>
+            <td>{{ $pemeriksaan->suhu }}°C</td>
+            <td>{{ $pemeriksaan->tensi_sistolik }} / {{ $pemeriksaan->tensi_diastolik }}</td>
             <td>{{ $pemeriksaan->diagnosa }}</td>
             <td>{{ $pemeriksaan->catatan_dokter }}</td>
 <td>
