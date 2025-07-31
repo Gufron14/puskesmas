@@ -101,6 +101,7 @@
             <th>Tensi (mmHg)</th>
             <th>Tanggal Periksa</th>
             <th>Keluhan</th>
+            <th>Diagnosa</th>
             <th>Catatan Dokter</th>
             <th>Resep Obat</th>
             {{-- <th>Total Bayar (Rp)</th> --}}
@@ -113,6 +114,7 @@
             <td>{{ $pemeriksaan->tensi_sistolik }} / {{ $pemeriksaan->tensi_diastolik }}</td>
             <td>{{ \Carbon\Carbon::parse($pemeriksaan->tanggal_pemeriksaan)->translatedFormat('d M Y') }}</td>
             <td>{{ $pemeriksaan->gejala }}</td>
+            <td>{{ $pemeriksaan->diagnosa }}</td>
             <td>{{ $pemeriksaan->catatan_dokter }}</td>
 <td>
     @if (!empty($pemeriksaan->resep_decoded) && is_array($pemeriksaan->resep_decoded))
