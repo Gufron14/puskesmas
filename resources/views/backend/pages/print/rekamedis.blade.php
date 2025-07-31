@@ -74,11 +74,11 @@
             <tr>
                 <th width="5%">No</th>
                 <th width="20%">Nama Pasien</th>
-                {{-- <th width="10%">Suhu</th>
-                <th width="15%">Tensi</th> --}}
+                <th width="10%">Suhu</th>
+                <th width="15%">Tensi</th>
                 <th width="20%">Resep Obat</th>
                 <th width="15%">Tanggal</th>
-                <th width="15%">Total Bayar</th>
+                {{-- <th width="15%">Total Bayar</th> --}}
             </tr>
         </thead>
         <tbody>
@@ -92,8 +92,8 @@
                 <tr>
                     <td class="text-center">{{ $loop->iteration }}</td>
                     <td>{{ $item->user->name ?? '-' }}</td>
-                    {{-- <td class="text-center">{{ $item->suhu }}°C</td>
-                    <td class="text-center">{{ $item->tensi_sistolik }}/{{ $item->tensi_diastolik }} mmHg</td> --}}
+                    <td class="text-center">{{ $item->suhu }}°C</td>
+                    <td class="text-center">{{ $item->tensi_sistolik }}/{{ $item->tensi_diastolik }} mmHg</td>
                     <td>
                         @if (count($item->resep_formatted))
                             @foreach ($item->resep_formatted as $r)
@@ -106,7 +106,7 @@
                     <td class="text-center">
                         {{ \Carbon\Carbon::parse($item->waktu_pemeriksaan)->translatedFormat('d/m/Y H:i') }}
                     </td>
-                    <td class="text-right">Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td>
+                    {{-- <td class="text-right">Rp{{ number_format($totalObat + $item->biaya, 0, ',', '.') }}</td> --}}
                 </tr>
             @empty
                 <tr>
@@ -115,7 +115,7 @@
             @endforelse
         </tbody>
         @if($pemeriksaans->count() > 0)
-        <tfoot>
+        {{-- <tfoot>
             <tr>
                 <th colspan="4" class="text-center">TOTAL</th>
                 <th class="text-right">
@@ -126,7 +126,7 @@
                     }), 0, ',', '.') }}
                 </th>
             </tr>
-        </tfoot>
+        </tfoot> --}}
         @endif
     </table>
 
