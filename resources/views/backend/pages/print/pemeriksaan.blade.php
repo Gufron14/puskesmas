@@ -96,7 +96,6 @@
 <table>
     <thead>
         <tr>
-            <th>No</th>
             <th>Nama</th>
             <th>Suhu (°C)</th>
             <th>Tensi (mmHg)</th>
@@ -109,7 +108,6 @@
     </thead>
     <tbody>
         <tr>
-            <td>1</td>
             <td>{{ $pemeriksaan->user->name ?? '-' }}</td>
             <td>{{ $pemeriksaan->suhu }}</td>
             <td>{{ $pemeriksaan->tensi_sistolik }} / {{ $pemeriksaan->tensi_diastolik }}</td>
