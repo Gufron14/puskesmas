@@ -83,52 +83,57 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-@if (count($resep))
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama Obat</th>
-                <th>Aturan Minum</th>
-                <th>Jumlah</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($resep as $index => $r)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $r['nama_obat'] ?? '-' }}</td>
-                    <td>{{ $r['keterangan_makan'] ?? '-' }}</td>
-                    <td>
-                        {{ $r['jumlah'] ?? 0 }}
-                        @switch($r['jenis_obat'])
-                            @case('Serbuk')
-                                Kantong
-                                @break
-                            @case('Kapsul')
-                                Kapsul
-                                @break
-                            @case('Tablet')
-                                Tablet
-                                @break
-                            @case('Sirup')
-                            @case('Obat Tetes')
-                                Botol
-                                @break
-                            @case('Salep')
-                                Pcs
-                                @break
-                            @default
-                                -
-                        @endswitch
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-@else
-    <em>-</em>
-@endif
+                        @if (!empty($resep))
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Obat</th>
+                                        <th>Aturan Minum</th>
+                                        <th>Jumlah</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach ($resep as $index => $r)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $r['nama_obat'] ?? '-' }}</td>
+                                            <td>{{ $r['keterangan_makan'] ?? '-' }}</td>
+                                            <td>
+                                                {{ $r['jumlah'] ?? 0 }}
+                                                @switch($r['jenis_obat'])
+                                                    @case('Serbuk')
+                                                        Kantong
+                                                    @break
+
+                                                    @case('Kapsul')
+                                                        Kapsul
+                                                    @break
+
+                                                    @case('Tablet')
+                                                        Tablet
+                                                    @break
+
+                                                    @case('Sirup')
+                                                    @case('Obat Tetes')
+                                                        Botol
+                                                    @break
+
+                                                    @case('Salep')
+                                                        Pcs
+                                                    @break
+
+                                                    @default
+                                                        -
+                                                @endswitch
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        @else
+                            <em>-</em>
+                        @endif
 
                     </div>
                     <div class="modal-footer">
