@@ -1,53 +1,61 @@
 FROM php:8.2-apache
 
-# --- System deps
 RUN apt-get update && apt-get install -y \
-    git unzip curl pkg-config \
-    libpq-dev libzip-dev libicu-dev \
-    libonig-dev \ 
-    libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
- && rm -rf /var/lib/apt/lists/*
+    git unzip curl libzip-dev zip libpng-dev libonig-dev libxml2-dev \
+    && docker-php-ext-install pdo pdo_mysql zip
 
-# --- PHP extensions
-# gd perlu di-config agar support jpeg & freetype
-RUN docker-php-ext-configure gd --with-jpeg --with-freetype \
- && docker-php-ext-install -j$(nproc) \
-    pdo pdo_pgsql pgsql pdo_mysql \
-    mbstring zip intl gd
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# --- Apache document root & mod_rewrite
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
-  /etc/apache2/sites-available/000-default.conf /etc/apache2/apache2.conf \
-  && a2enmod rewrite
+COPY . /var/www/html
+
+# Pastikan direktori storage dan bootstrap/cache ada dan memiliki permission yang benar
+RUN mkdir -p /var/www/html/storage/app/public \
+    && mkdir -p /var/www/html/storage/logs \
+    && mkdir -p /var/www/html/storage/framework/cache \
+    && mkdir -p /var/www/html/storage/framework/sessions \
+    && mkdir -p /var/www/html/storage/framework/views \
+    && mkdir -p /var/www/html/bootstrap/cache
+
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html \
+    && chmod -R 775 /var/www/html/storage \
+    && chmod -R 775 /var/www/html/bootstrap/cache
+
+RUN sed -i 's|DocumentRoot /var/www/html|DocumentRoot /var/www/html/public|g' /etc/apache2/sites-available/000-default.conf
+
+RUN a2enmod rewrite
 
 WORKDIR /var/www/html
 
-# --- Composer
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
-ENV COMPOSER_ALLOW_SUPERUSER=1
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader \
+    && cp .env.example .env \
+    && php artisan key:generate \
+    && php artisan config:clear \
+    && php artisan cache:clear \
+    && php artisan view:clear
 
-# 1) Warm vendor cache TANPA scripts (artisan belum dicopy)
-COPY composer.json composer.lock* ./
-RUN composer install --no-dev --no-interaction --prefer-dist --no-ansi --no-progress --no-scripts
+# Jalankan storage:link setelah composer install
+RUN php artisan storage:link
 
-# 2) Copy semua source (termasuk artisan)
-COPY . .
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
-# 3) Permission Laravel
-RUN chown -R www-data:www-data storage bootstrap/cache \
- && chmod -R ug+rwx storage bootstrap/cache
+RUN npm install && npm run build
 
-# 4) Sekarang bolehin composer scripts (artisan sudah ada)
-RUN composer install --no-dev --no-interaction --prefer-dist --no-ansi --no-progress
+# Perbaiki konfigurasi PHP untuk upload dan session
+RUN echo "upload_max_filesize=50M\npost_max_size=50M\nmax_execution_time=300\nmax_input_time=300\nmemory_limit=256M\nsession.cookie_secure=0\nsession.cookie_httponly=1\nsession.cookie_samesite=Lax" > /usr/local/etc/php/conf.d/uploads.ini
 
-# (opsional) cache laravel di runtime setelah APP_KEY ada:
-# RUN php artisan config:cache && php artisan route:cache
+# Set permission lagi setelah semua operasi selesai
+# RUN chown -R www-data:www-data /var/www/html/storage \
+#     && chown -R www-data:www-data /var/www/html/public/storage \
+#     && chown -R www-data:www-data /var/www/html/bootstrap/cache \
+#     && chmod -R 775 /var/www/html/storage \
+#     && chmod -R 775 /var/www/html/public/storage \
+#     && chmod -R 775 /var/www/html/bootstrap/cache
 
-# --- Koyeb listen port
-ENV PORT=8000
-EXPOSE ${PORT}
-RUN sed -i "s/Listen 80/Listen \${PORT}/" /etc/apache2/ports.conf
+# Tambahkan script untuk memastikan permission saat container start
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-HEALTHCHECK CMD curl -f http://localhost:${PORT}/ || exit 1
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["apache2-foreground"]
