@@ -23,9 +23,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Share data ke semua view
-        if (Schema::hasTable('antrians')) {
-            $antrian = Antrian::first(); // hanya ambil 1 antrian
-            View::share('antrian', $antrian);
-        }
+        // if (Schema::hasTable('antrians')) {
+        //     $antrian = Antrian::first();
+        //     View::share('antrian', $antrian);
+        // }
     }
 }
