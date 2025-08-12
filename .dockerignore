@@ -1,5 +1,5 @@
 # Abaikan file dan folder berikut saat membangun Docker image
-# Rahasia & konfigurasi lokal
+# Rahasia 6 konfigurasi lokal
 .env
 .env.*
 
@@ -23,8 +23,7 @@ storage/*.key
 phpunit.xml
 tests
 
-# Docker tooling
-Dockerfile
-docker-entrypoint.sh
-.dockerignore
+# Docker tooling (biarkan docker-entrypoint.sh TIDAK di-ignore agar bisa di-COPY)
+# Dockerfile
+# .dockerignore
 
