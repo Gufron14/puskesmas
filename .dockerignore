@@ -1,0 +1,30 @@
+# Abaikan file dan folder berikut saat membangun Docker image
+# Rahasia & konfigurasi lokal
+.env
+.env.*
+
+# Dependency lokal
+node_modules
+vendor
+
+# Cache build Laravel
+bootstrap/cache/config.php
+bootstrap/cache/packages.php
+bootstrap/cache/services.php
+
+# Keys dan cache lainnya
+storage/*.key
+
+# VCS dan tooling
+.git
+.gitignore
+
+# Testing
+phpunit.xml
+tests
+
+# Docker tooling
+Dockerfile
+docker-entrypoint.sh
+.dockerignore
+
