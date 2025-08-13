@@ -85,15 +85,24 @@ fi
 
 # Discover package dan migrasi (akan berhasil jika DB terkonfigurasi benar)
 php artisan package:discover --ansi || true
-php artisan migrate --force || true
 
-# Jalankan seeder hanya jika table users masih kosong (first time deploy)
-USER_COUNT=$(php -r "require 'vendor/autoload.php'; \$app = require 'bootstrap/app.php'; \$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap(); echo App\Models\User::count();") 
-if [ "$USER_COUNT" = "0" ]; then
-    echo "Menjalankan database seeder untuk pertama kali..."
+# Cek apakah perlu fresh migration
+if [ "${FRESH_MIGRATE:-}" = "true" ]; then
+    echo "Menjalankan fresh migration..."
+    php artisan migrate:fresh --force || true
+    echo "Fresh migration selesai, akan jalankan seeder..."
     php artisan db:seed --force || true
 else
-    echo "Database sudah berisi user, skip seeding."
+    php artisan migrate --force || true
+    
+    # Jalankan seeder hanya jika table users masih kosong (first time deploy)
+    USER_COUNT=$(php -r "require 'vendor/autoload.php'; \$app = require 'bootstrap/app.php'; \$app->make('Illuminate\Contracts\Console\Kernel')->bootstrap(); echo App\Models\User::count();") 
+    if [ "$USER_COUNT" = "0" ]; then
+        echo "Menjalankan database seeder untuk pertama kali..."
+        php artisan db:seed --force || true
+    else
+        echo "Database sudah berisi user, skip seeding."
+    fi
 fi
 
 # Jalankan cache:clear setelah DB siap jika driver=database, jika bukan maka aman kapan saja

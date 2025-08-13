@@ -15,6 +15,15 @@ use App\Http\Controllers\PendaftaranController;
 
 Route::get('/', [HomeController::class, 'frontend'])->name('frontend');
 
+// Route test untuk debug - hapus setelah selesai debug
+Route::get('/test-users', function() {
+    $users = \App\Models\User::all(['id', 'name', 'telepon', 'email', 'role', 'created_at']);
+    return response()->json([
+        'total_users' => $users->count(),
+        'users' => $users
+    ], 200, [], JSON_PRETTY_PRINT);
+});
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
