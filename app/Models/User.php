@@ -13,6 +13,14 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Override username field untuk authentication
+     */
+    public function getAuthIdentifierName()
+    {
+        return 'telepon';
+    }
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
