@@ -29,6 +29,10 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
+    
+    // Route sementara untuk register admin (hapus setelah debug selesai)
+    Route::get('/register-admin', [AuthController::class, 'showRegisterAdmin'])->name('register.admin');
+    Route::post('/register-admin', [AuthController::class, 'registerAdmin'])->name('register.admin.post');
 });
 
 Route::middleware(['auth'])->group(function () {
